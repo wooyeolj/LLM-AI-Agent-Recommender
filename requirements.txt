@@ -12,7 +12,6 @@ python-dotenv>=1.0.0
 # 머신러닝 임베딩 & 리랭킹
 sentence-transformers>=2.3.0
 chromadb>=0.4.22
-FlagEmbedding>=1.2.0
 
 # 데이터 처리
 pandas>=2.0.0
