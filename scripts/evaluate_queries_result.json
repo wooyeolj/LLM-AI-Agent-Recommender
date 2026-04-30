@@ -1,0 +1,240 @@
+{
+  "evaluated_at": "2026-05-20T07:25:38.301963",
+  "fallback_model": "gemma3:4b",
+  "runs_per_query": 5,
+  "note": "test_queries.json 기반 분류기 평가. LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질 수 있다. 버킷 AMBIGUOUS는 expected_category가 다중인 쿼리 의미.",
+  "summary": {
+    "total_queries": 10,
+    "total_runs": 50,
+    "total_correct": 48,
+    "accuracy_pct": 96.0,
+    "by_bucket": {
+      "AMBIGUOUS": {
+        "correct": 5,
+        "runs": 5,
+        "accuracy_pct": 100.0
+      },
+      "MODEL": {
+        "correct": 20,
+        "runs": 20,
+        "accuracy_pct": 100.0
+      },
+      "AGENT": {
+        "correct": 15,
+        "runs": 15,
+        "accuracy_pct": 100.0
+      },
+      "GENERAL": {
+        "correct": 8,
+        "runs": 10,
+        "accuracy_pct": 80.0
+      }
+    }
+  },
+  "queries": [
+    {
+      "id": 1,
+      "query": "내가 수집한 자료들로 발표 ppt를 만들 무료 AI를 추천해줘",
+      "expected_category": [
+        "MODEL",
+        "AGENT"
+      ],
+      "accepted": [
+        "MODEL",
+        "AGENT"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.798,
+      "status": "PASS",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL"
+      ]
+    },
+    {
+      "id": 2,
+      "query": "그림을 잘 그리는 저렴한 AI 추천해줘",
+      "expected_category": "MODEL",
+      "accepted": [
+        "MODEL"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.651,
+      "status": "PASS",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL"
+      ]
+    },
+    {
+      "id": 3,
+      "query": "내 자금관리를 도와줄 비서가 필요해",
+      "expected_category": "AGENT",
+      "accepted": [
+        "AGENT"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.0,
+      "status": "PASS",
+      "predictions": [
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT"
+      ]
+    },
+    {
+      "id": 4,
+      "query": "내 물리학 수업 과제를 도와줄 고성능 AI를 추천해줘",
+      "expected_category": "MODEL",
+      "accepted": [
+        "MODEL"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.62,
+      "status": "PASS",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL"
+      ]
+    },
+    {
+      "id": 5,
+      "query": "하루에 물을 얼마나 마시면 좋아?",
+      "expected_category": "GENERAL",
+      "accepted": [
+        "GENERAL"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.598,
+      "status": "PASS",
+      "predictions": [
+        "GENERAL",
+        "GENERAL",
+        "GENERAL",
+        "GENERAL",
+        "GENERAL"
+      ]
+    },
+    {
+      "id": 6,
+      "query": "한국어 잘하는 무료 LLM 추천해줘",
+      "expected_category": "MODEL",
+      "accepted": [
+        "MODEL"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.0,
+      "status": "PASS",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL"
+      ]
+    },
+    {
+      "id": 7,
+      "query": "코딩 잘하는 ai는 뭐가 있어?",
+      "expected_category": "MODEL",
+      "accepted": [
+        "MODEL"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.581,
+      "status": "PASS",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL",
+        "MODEL"
+      ]
+    },
+    {
+      "id": 8,
+      "query": "매일 아침 뉴스를 요약해서 자동으로 보내는 시스템을 만들고 싶어",
+      "expected_category": "AGENT",
+      "accepted": [
+        "AGENT"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.638,
+      "status": "PASS",
+      "predictions": [
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT"
+      ]
+    },
+    {
+      "id": 9,
+      "query": "내 일정 관리를 도와줄 시스템이 필요해",
+      "expected_category": "AGENT",
+      "accepted": [
+        "AGENT"
+      ],
+      "runs": 5,
+      "correct": 5,
+      "accuracy": 1.0,
+      "avg_time_sec": 0.597,
+      "status": "PASS",
+      "predictions": [
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT",
+        "AGENT"
+      ]
+    },
+    {
+      "id": 10,
+      "query": "파이썬이랑 자바 중 어느 것이 취업에 유리할까?",
+      "expected_category": "GENERAL",
+      "accepted": [
+        "GENERAL"
+      ],
+      "runs": 5,
+      "correct": 3,
+      "accuracy": 0.6,
+      "avg_time_sec": 0.625,
+      "status": "부분",
+      "predictions": [
+        "MODEL",
+        "MODEL",
+        "GENERAL",
+        "GENERAL",
+        "GENERAL"
+      ]
+    }
+  ]
+}

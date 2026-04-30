@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+.venv
+data/chroma_data/
+data/crawl_cache.json
+data/pricing_cache.json
+.vscode/
+.idea/
+.pytest_cache/
+*.log
