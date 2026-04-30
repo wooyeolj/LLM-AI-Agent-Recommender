@@ -1,0 +1,64 @@
+# 환경 변수 (민감 정보 포함)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 가상환경
+venv/
+env/
+ENV/
+.venv
+
+# 데이터 파일 (용량이 크므로 제외)
+data/chroma_data/
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 테스트
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# 로그
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Claude Code 설정 (로컬 전용)
+.claude/
+
+# 개인 메모
+memo.txt

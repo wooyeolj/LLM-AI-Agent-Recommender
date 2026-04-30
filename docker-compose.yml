@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: llm-recommender
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./data:/app/data  # 데이터 영구 저장
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - OLLAMA_URL=http://host.docker.internal:11434
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

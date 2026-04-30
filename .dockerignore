@@ -1,0 +1,17 @@
+#빌드 속도 개선 및 보안을 위해 도커 이미지 빌드 시 제외할 파일
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.git/
+.gitignore
+.vscode/
+.idea/
+*.log
+.env
+data/
+tests/

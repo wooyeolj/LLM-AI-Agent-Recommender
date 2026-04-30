@@ -1,0 +1,35 @@
+{
+  "description": "쿼리 분류 및 RAG 파이프라인 성능 테스트",
+  "queries": [
+    {
+      "id": 1,
+      "query": "내가 수집한 자료들로 발표에 사용할 ppt를 만들어줘",
+      "expected_category": ["MODEL", "AGENT"],
+      "expect_table": true
+    },
+    {
+      "id": 2,
+      "query": "그림을 잘 그리는 AI 추천해줘",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 3,
+      "query": "내 자금관리를 도와줄 비서가 필요해",
+      "expected_category": "AGENT",
+      "expect_table": true
+    },
+    {
+      "id": 4,
+      "query": "내 물리학 수업 과제를 도와줄 AI가 필요해",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 5,
+      "query": "하루에 물을 얼마나 마시면 좋아?",
+      "expected_category": "GENERAL",
+      "expect_table": false
+    }
+  ]
+}
