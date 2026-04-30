@@ -8,8 +8,13 @@ GITHUB_API = "https://api.github.com/repos"
 def _github_headers() -> dict:
     """토큰이 있으면 인증 헤더 추가 (5000req/h), 없으면 비인증 (60req/h)"""
     headers = {"Accept": "application/vnd.github+json"}
-    if settings.GITHUB_TOKEN:
-        headers["Authorization"] = f"Bearer {settings.GITHUB_TOKEN}"
+    token = (settings.GITHUB_TOKEN or "").strip()
+    if token:
+        try:
+            token.encode("ascii")
+            headers["Authorization"] = f"Bearer {token}"
+        except UnicodeEncodeError:
+            print("[!] GITHUB_TOKEN에 잘못된 문자가 있습니다. 비인증으로 진행합니다.")
     return headers
 
 # 추천 대상 AI 에이전트 프레임워크 목록 (org/repo 형식)
