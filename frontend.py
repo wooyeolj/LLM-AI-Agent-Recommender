@@ -111,6 +111,8 @@ if prompt := st.chat_input("어떤 AI 모델이나 에이전트를 찾고 계신
                         table_data = event.get("data", [])
                         status_ph.empty()
                         with table_ph.container():
+                            badge = {"MODEL": "🧠 MODEL", "AGENT": "🤖 AGENT", "GENERAL": "💬 GENERAL"}.get(category, category)
+                            st.caption(f"분류: **{badge}**")
                             _render_table(category, table_data)
 
                     elif etype == "chunk":
