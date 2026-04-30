@@ -8,7 +8,7 @@ st.set_page_config(page_title="AI 추천 시스템", layout="wide")
 st.title("AI 모델 & 에이전트 맞춤 추천")
 st.markdown("질문을 입력하면 실시간으로 정보를 검색하여 최적의 솔루션을 제안합니다.")
 
-BACKEND_URL = f"http://localhost:{settings.BACKEND_PORT}"
+BACKEND_URL = settings.BACKEND_URL
 
 
 def _render_table(category: str, data: list):

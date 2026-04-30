@@ -90,10 +90,48 @@ streamlit run frontend.py
 
 브라우저에서 `http://localhost:8501` 접속
 
-### Docker 실행 (Ollama는 호스트에서 별도 실행)
+### Docker 실행
+
+LLM(Ollama)만 호스트에서 실행하고, FastAPI 백엔드와 Streamlit UI는 Docker로 실행합니다.
 
 ```bash
+# 1. Ollama 실행 (호스트)
+ollama pull gemma3:4b
+
+# 2. 환경변수 설정
+cp .env.example .env
+
+# 3. 초기 DB 구축 (최초 1회)
+docker compose run --rm app python3 scripts/init_db.py
+
+# 4. 전체 실행
 docker compose up --build
+```
+
+브라우저에서 `http://localhost:8501` 접속
+
+---
+
+## LLM 교체 방법
+
+`OLLAMA_URL` 환경변수만 바꾸면 다른 LLM 엔드포인트에 연결할 수 있습니다.
+
+| 시나리오 | OLLAMA_URL 설정 |
+|---------|----------------|
+| 로컬 Ollama (기본) | `http://127.0.0.1:11434` |
+| 다른 Ollama 모델 | `OLLAMA_MODEL=llama3.2` 로 변경 |
+| Google Colab + ngrok | `https://xxxx.ngrok-free.app` |
+| 원격 서버 Ollama | `http://[서버IP]:11434` |
+
+**Colab에서 Ollama 실행하는 방법:**
+```python
+# Colab 셀에서 실행
+!curl -fsSL https://ollama.ai/install.sh | sh
+!ollama pull gemma3:4b &
+!pip install pyngrok
+from pyngrok import ngrok
+url = ngrok.connect(11434, "http")
+print(url)  # 이 URL을 OLLAMA_URL에 설정
 ```
 
 ---
@@ -102,8 +140,8 @@ docker compose up --build
 
 | 변수 | 기본값 | 설명 |
 |------|--------|------|
-| `OLLAMA_URL` | `http://127.0.0.1:11434` | Ollama 서버 주소 |
-| `OLLAMA_MODEL` | `gemma3:4b` | 사용할 Ollama 모델 |
+| `OLLAMA_URL` | `http://127.0.0.1:11434` | LLM 서버 주소 (로컬/Colab/원격) |
+| `OLLAMA_MODEL` | `gemma3:4b` | 사용할 Ollama 모델명 |
 | `EMBEDDING_MODEL` | `dragonkue/BGE-m3-ko` | 임베딩 모델 |
 | `RERANKER_MODEL` | `BAAI/bge-reranker-v2-m3` | 리랭킹 모델 |
 | `MODEL_DEVICE` | `cpu` | 추론 디바이스 (cpu / cuda) |

@@ -14,6 +14,8 @@ class Settings(BaseSettings):
 
     BACKEND_HOST: str = "0.0.0.0"
     BACKEND_PORT: int = 8000
+    # Streamlit → FastAPI 연결 주소. Docker에서는 서비스명 "app" 사용
+    BACKEND_URL: str = "http://localhost:8000"
 
     EMBEDDING_MODEL: str = "dragonkue/BGE-m3-ko"
     RERANKER_MODEL: str = "BAAI/bge-reranker-v2-m3"
