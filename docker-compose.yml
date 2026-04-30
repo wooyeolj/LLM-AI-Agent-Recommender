@@ -13,8 +13,10 @@ services:
       - hf_cache:/root/.cache/huggingface   # 모델 재다운로드 방지
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
     environment:
-      # LLM 엔드포인트 — 로컬 Ollama, Colab ngrok URL 등으로 교체 가능
+      # .env 값보다 우선 적용 (Docker 내부에서는 host.docker.internal로 Ollama 접근)
       - OLLAMA_URL=http://host.docker.internal:11434
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
@@ -28,8 +30,10 @@ services:
       - .:/app
     depends_on:
       - app
+    env_file:
+      - .env
     environment:
-      # Docker 내부 네트워크로 FastAPI에 연결
+      # Docker 내부 네트워크로 FastAPI에 연결 (.env의 BACKEND_URL보다 우선)
       - BACKEND_URL=http://app:8000
     command: streamlit run frontend.py --server.port 8501 --server.address 0.0.0.0
 
