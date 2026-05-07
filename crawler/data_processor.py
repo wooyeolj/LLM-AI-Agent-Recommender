@@ -44,9 +44,11 @@ class DataProcessor:
             tag_str = ", ".join(tags[:10]) if isinstance(tags, list) else str(tags)
             pipeline_tag = item.get("pipeline_tag", "")
             task_str = _PIPELINE_KO.get(pipeline_tag, pipeline_tag)
+            cost = item.get("cost", "무료 (오픈소스)")
 
             texts.append(
-                f"Model: {name}\nTask: {task_str}\nDescription: {desc}\nTags: {tag_str}"
+                f"모델명: {name}\n태스크: {task_str}\n설명: {desc}\n가격: {cost}\n태그: {tag_str}"
+                #f"{name}은 {task_str}에 특화된 모델입니다. 가격: {cost}. {desc} 관련 태그: {tag_str}"
             )
             metadatas.append({
                 "name": name,
@@ -55,11 +57,11 @@ class DataProcessor:
                 "description": desc,
                 "pipeline_tag": pipeline_tag,
                 "cost": item.get("cost", "무료 (오픈소스)"),
-                "downloads": int(item.get("downloads", 0)),
-                "likes": int(item.get("likes", 0)),
+                "downloads": int(item.get("downloads") or 0),
+                "likes": int(item.get("likes") or 0),
                 "tags": tag_str,
                 "created_at": item.get("createdAt", ""),
-                "context_length": int(item.get("context_length", 0)),
+                "context_length": int(item.get("context_length") or 0),
                 "collected_at": now,
             })
             clean_id = name.replace("/", "_").replace(".", "-").lower()
@@ -70,7 +72,7 @@ class DataProcessor:
                 ids=ids, texts=texts, metadatas=metadatas, item_type="MODEL"
             )
         except Exception as e:
-            print(f"❌ 모델 DB 저장 에러: {e}")
+            print(f"[ERROR] 모델 DB 저장 에러: {e}")
 
     async def _save_agents(self, data_list: List[Dict]):
         texts, metadatas, ids = [], [], []
@@ -82,9 +84,9 @@ class DataProcessor:
             use_case = item.get("use_case", "")
 
             texts.append(
-                f"Agent: {name}\nUse Case: {use_case}\nDescription: {desc}\n"
-                f"Supported LLMs: {item.get('supported_llms', '')}\n"
-                f"Local Support: {item.get('local_support', False)}"
+                f"에이전트: {name}\n사용 사례: {use_case}\n설명: {desc}\n"
+                f"지원 LLM: {item.get('supported_llms', '')}\n"
+                f"로컬 지원: {'가능' if item.get('local_support', False) else '불가'}"
             )
             metadatas.append({
                 "name": name,
@@ -95,7 +97,7 @@ class DataProcessor:
                 "supported_llms": item.get("supported_llms", ""),
                 "local_support": bool(item.get("local_support", False)),
                 "difficulty": item.get("difficulty", "보통"),
-                "github_stars": int(item.get("github_stars", 0)),
+                "github_stars": int(item.get("github_stars") or 0),
                 "last_updated": item.get("last_updated", ""),
                 "language": item.get("language", "Python"),
                 "license": item.get("license", "Unknown"),
@@ -109,7 +111,7 @@ class DataProcessor:
                 ids=ids, texts=texts, metadatas=metadatas, item_type="AGENT"
             )
         except Exception as e:
-            print(f"❌ 에이전트 DB 저장 에러: {e}")
+            print(f"[ERROR] 에이전트 DB 저장 에러: {e}")
 
 
 data_processor = DataProcessor()

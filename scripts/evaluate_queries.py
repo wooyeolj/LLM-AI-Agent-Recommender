@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.core.config import settings
 
 BASE_URL = f"http://localhost:{settings.BACKEND_PORT}"
-QUERIES_PATH = os.path.join(settings.BASE_DIR, "data", "test_queries.json")
+QUERIES_PATH = os.path.join(settings.BASE_DIR, "tests", "test_queries.json")
 
 
 def call_chat(query: str, timeout: int = 300) -> dict:
@@ -58,8 +58,8 @@ def evaluate():
 
             status = "PASS" if (cat_ok and table_ok) else "FAIL"
 
-            print(f"  실제 카테고리: {actual_cat}  {'✅' if cat_ok else f'❌ (기대: {label})'}")
-            print(f"  테이블 존재: {'있음' if table_data else '없음'} (기대: {'있음' if expect_table else '없음'})  {'✅' if table_ok else '❌'}")
+            print(f"  실제 카테고리: {actual_cat}  {'[OK]' if cat_ok else f'[FAIL] (기대: {label})'}")
+            print(f"  테이블 존재: {'있음' if table_data else '없음'} (기대: {'있음' if expect_table else '없음'})  {'[OK]' if table_ok else '[FAIL]'}")
             print(f"  응답 시간: {elapsed:.1f}s")
 
             if table_data:
@@ -84,14 +84,14 @@ def evaluate():
             })
 
         except requests.exceptions.ConnectionError:
-            print(f"  ❌ 백엔드 연결 실패 — python3 app/main.py 를 먼저 실행하세요")
+            print(f"  [ERROR] 백엔드 연결 실패 — python3 app/main.py 를 먼저 실행하세요")
             sys.exit(1)
         except requests.exceptions.Timeout:
             elapsed = time.time() - start
-            print(f"  ❌ 타임아웃 ({elapsed:.0f}s 초과)")
+            print(f"  [ERROR] 타임아웃 ({elapsed:.0f}s 초과)")
             results.append({"id": qid, "query": query_text, "status": "TIMEOUT", "elapsed": round(elapsed, 1)})
         except Exception as e:
-            print(f"  ❌ 오류: {e}")
+            print(f"  [ERROR] 오류: {e}")
             results.append({"id": qid, "query": query_text, "status": "ERROR", "error": str(e)})
 
     print("\n" + "=" * 60)
@@ -113,12 +113,12 @@ def evaluate():
     print(f"  오류:    {len(errors)}개")
 
     if results:
-        avg_time = sum(r["elapsed"] for r in results) / len(results)
+        avg_time = sum(r.get("elapsed", 0) for r in results) / len(results)
         print(f"  평균 응답시간: {avg_time:.1f}s")
 
     print()
     for r in results:
-        icon = "✅" if r["status"] == "PASS" else "❌"
+        icon = "[OK]" if r["status"] == "PASS" else "[FAIL]"
         exp = r.get("expected_category", "?")
         exp_label = " 또는 ".join(exp) if isinstance(exp, list) else exp
         cat_info = f"{r.get('actual_category', '?')} (기대: {exp_label})"

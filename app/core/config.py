@@ -24,12 +24,12 @@ class Settings(BaseSettings):
     # 데이터 경로 — 절대경로 기본값, .env에서 오버라이드 가능
     CHROMA_DB_PATH: str = os.path.join(_BASE, "data", "chroma_data")
 
-    CACHE_TTL_DAYS: int = 30
+    CACHE_TTL_DAYS: int = 14
     HF_TOP_N: int = 30
     GITHUB_TOKEN: str = ""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=os.path.join(_BASE, ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
     )
