@@ -1,8 +1,7 @@
 # LLM & AI Agent 추천 시스템
 
-2022년 ChatGPT 출시 이후 수백 개의 LLM과 에이전트 프레임워크가 출시되면서, 목적에 맞는 ai 도구를 선택하는 것이 하나의 과제가 되었다.
-
-이 프로젝트는 사용자의 자연어 질문을 기반으로 HuggingFace, OpenRouter, GitHub api를 이용해 실시간으로 데이터를 수집하고, RAG (검색 증강 생성) 기술로 최적의 LLM 모델 또는 AI 에이전트 프레임워크를 제공한다.
+2022년 ChatGPT 출시 이후 수백 개의 LLM과 에이전트 프레임워크가 출시되면서, 목적에 맞는 AI 도구를 선택하는 것이 하나의 과제가 되었다.
+이 프로젝트는 사용자의 자연어 질문을 기반으로 HuggingFace, OpenRouter, GitHub API를 이용해 실시간으로 데이터를 수집하고, RAG (검색 증강 생성) 기술로 최적의 LLM 모델 또는 AI 에이전트 프레임워크를 제공한다.
 
 ---
 
@@ -10,7 +9,7 @@
 
 - [프로젝트 소개](#프로젝트-소개)
 - [프로젝트 데모](#프로젝트-데모)
-- [모델 선택 이유](#모델-선택-이유)
+- [모델 특징](#모델-특징)
 - [아키텍처](#아키텍처)
 - [설계 결정](#설계-결정)
 - [크롤링 전략](#크롤링-전략)
@@ -30,14 +29,16 @@
 ## 프로젝트 소개
 
 이 프로젝트는 AI 도구의 선택 장벽을 낮추기 위해 사용자의 자연어 질문을 기반으로 최적의 AI 도구를 찾는다.
+빈 답변을 방지하기 위해 최초 1회 `init_db.py`로 초기 DB를 구성하며, 이후 요청마다 **분류–검색–리랭킹–생성** 의 4단계 파이프라인이 동작한다.
 
-사용자의 질문이 입력되면 **분류–검색–크롤링–리랭킹–생성**의 5단계 RAG 파이프라인이 동작한다.
+[초기화] `init_db.py` 실행 시 HuggingFace, OpenRouter, GitHub API에서 데이터를 수집해 ChromaDB에 저장
 
-1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)** 으로 자동 분류 (MODEL / AGENT / GENERAL)
-2. 분류 결과에 맞는 데이터를 **HuggingFace, OpenRouter, GitHub API**에서 실시간 수집
-3. 질문을 **임베딩**(BGE-m3-ko)해 ChromaDB에서 유사 후보 20개 검색
-4. **리랭킹**(BGE-reranker-v2-m3)으로 쿼리 관련도를 직접 비교해 상위 3~5개 선별
-5. **Ollama(gemma3:4b)**가 선별된 결과를 컨텍스트로 자연어 답변을 SSE 스트리밍으로 제공
+[요청 처리]
+1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)**으로 분류 (MODEL / AGENT / GENERAL)
+2. 질문을 **임베딩(BGE-m3-ko)**해 ChromaDB에서 유사 후보 20개 검색
+3. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API**에서  실시간 수집 후 DB UPSERT (UPDATE & INSERT)
+4. **리랭킹(BGE-reranker-v2-m3)**으로 쿼리 관련도를 비교해 상위 3~5개 선별
+5. **Ollama(gemma3:4b)**가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
 
 외부 유료 API 없이 완전 로컬 실행이 가능하며, Docker와 로컬 환경을 모두 지원한다.
 
@@ -49,32 +50,32 @@
 
 ---
 
-## 모델 선택 이유
+## 모델 특징
 
 ### Gemma3:4b — 로컬 추론 LLM
 
 | 항목 | 내용 |
 |------|------|
-| 크기 | 4B 파라미터 — CPU 또는 Google Colab 무료 환경에서 실행 가능 |
-| 한국어 | 소형 모델 대비 한국어 이해 및 생성 품질 우수 |
+| 크기 | 4B 파라미터로 CPU, Google Colab 무료 환경에서도 안정적 |
+| 한국어 | 모델 크기 대비 한국어 이해 및 생성 품질 우수 |
 | 추론 | 구조화된 답변 생성과 분류 태스크에서 안정적 |
-| 선택 이유 | 외부 API 비용 없이 완전 로컬 실행을 유지하면서도 실용적인 품질 확보 |
+| 선택 이유 | 외부 API 비용 없이 로컬 실행을 유지하면서도 실용적인 품질 확보 |
 
-### dragonkue/BGE-m3-ko — 한국어 임베딩
+### dragonkue/BGE-m3-ko — 임베딩
 
 | 항목 | 내용 |
 |------|------|
 | 베이스 | BAAI/BGE-M3 (다국어 임베딩 SOTA 모델) |
 | 특화 | 한국어 데이터로 추가 파인튜닝 |
-| 선택 이유 | 한국어 쿼리로 영문 모델 설명을 검색할 때 의미 매칭 정확도 향상 |
+| 선택 이유 | 기반 모델 대비 한국어 쿼리 의미 매칭 정확도 향상 |
 
 ### BAAI/bge-reranker-v2-m3 — 리랭킹
 
 | 항목 | 내용 |
 |------|------|
+| 베이스 | 임베딩 모델과 동일한 아키텍처 기반(BGE) — 언어를 같은 방식으로 이해해 검색과 리랭킹 일관성 유지 |
 | 구조 | Cross-Encoder — 쿼리와 문서 쌍을 직접 비교해 정밀한 관련도 점수 산출 |
-| 다국어 | 한국어 포함 다국어 지원 |
-| 선택 이유 | 벡터 검색(Bi-Encoder)의 한계를 보완해 상위 결과의 정렬 정확도를 높임 |
+| 선택 이유 | 벡터 검색의 한계를 보완해 상위 결과의 정확도를 높임 |
 
 ---
 
@@ -94,7 +95,7 @@
     │              HuggingFace API / GitHub API
     ▼
 [리랭커] ── BGE-reranker-v2-m3 (Cross-Encoder)
-    │        상위 3개 선별
+    │        MODEL 상위 5개 / AGENT 상위 3개 선별
     ▼
 [LLM 답변 생성] ── Ollama (gemma3:4b)
     │              검색 결과를 컨텍스트로 활용
@@ -110,7 +111,7 @@ SSE 스트리밍 → Streamlit UI
 
 | 결정 | 대안 | 선택 이유 및 강점 |
 |------|------|-----------------|
-| **2단계 검색** ChromaDB(20개) → CrossEncoder(5개) | CrossEncoder만 전체 DB에 적용 | CrossEncoder는 쿼리-문서 쌍을 하나씩 비교하므로 문서 수에 비례해 시간이 증가. ChromaDB로 후보를 먼저 좁혀 정밀도와 속도를 동시에 확보 |
+| **2단계 검색** ChromaDB(20개) → CrossEncoder(MODEL 5개 / AGENT 3개) | CrossEncoder만 전체 DB에 적용 | CrossEncoder는 쿼리-문서 쌍을 하나씩 비교하므로 문서 수에 비례해 시간이 증가. ChromaDB로 후보를 먼저 좁혀 정밀도와 속도를 동시에 확보 |
 | **분류 구조** 키워드 1차 → LLM fallback | 모든 쿼리를 LLM으로 분류 | "LLM", "에이전트" 등 명확한 키워드가 있는 쿼리는 수ms 내 분류 완료. LLM 호출(3~10초)은 모호한 경우에만 발생해 평균 응답 시간 단축 |
 | **SSE 스트리밍** | WebSocket | 이 서비스는 서버→클라이언트 단방향 스트리밍만 필요. SSE는 HTTP 표준으로 FastAPI `StreamingResponse`로 간단히 구현되며, WebSocket 대비 연결 관리 복잡도가 낮음 |
 | **파일 기반 캐시** (JSON) | Redis / 인메모리 dict | 인메모리 dict는 앱 재시작 시 14일 TTL이 초기화되는 버그 유발. Redis는 별도 서버가 필요해 Docker 구성이 복잡해짐. JSON 파일은 추가 인프라 없이 재시작 후에도 TTL 유지 |
@@ -298,6 +299,7 @@ print(url)  # 이 URL을 OLLAMA_URL에 설정
 | `EMBEDDING_MODEL` | `dragonkue/BGE-m3-ko` | 임베딩 모델 |
 | `RERANKER_MODEL` | `BAAI/bge-reranker-v2-m3` | 리랭킹 모델 |
 | `MODEL_DEVICE` | `cpu` | 추론 디바이스 (cpu / cuda) |
+| `CACHE_TTL_DAYS` | `14` | 동일 키워드 재크롤링 방지 기간 (일) |
 | `GITHUB_TOKEN` | *(선택)* | GitHub API 인증 토큰 (없으면 60req/h) |
 | `BACKEND_PORT` | `8000` | FastAPI 서버 포트 |
 
