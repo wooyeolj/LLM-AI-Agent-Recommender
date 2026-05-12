@@ -57,8 +57,5 @@ htmlcov/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Claude Code 설정 (로컬 전용)
-.claude/
-
 # 개인 메모
 memo.txt
