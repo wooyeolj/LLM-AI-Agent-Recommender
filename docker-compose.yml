@@ -1,39 +1,41 @@
+#프로젝트 서비스 구성 설계도
+
 services:
-  app:
+  app:   # FastAPI 백엔드 서비스
     build: .
     container_name: llm-recommender-api
-    restart: unless-stopped
+    restart: unless-stopped #크래시 시 자동 재시작
     ports:
-      - "8000:8000"
+      - "8000:8000" 
     volumes:
-      - .:/app
-      - ./data:/app/data
-      - hf_cache:/root/.cache/huggingface   # 모델 재다운로드 방지
-    extra_hosts:
+      - .:/app  #실시간 동기화
+      - ./data:/app/data #Chroma DB 저장
+      - hf_cache:/root/.cache/huggingface   # 모델 캐시 (재다운로드 방지)
+    extra_hosts: #컨테이너 호스트 접속 허용
       - "host.docker.internal:host-gateway"
     env_file:
       - .env
     environment:
-      # .env 값보다 우선 적용 (Docker 내부에서는 host.docker.internal로 Ollama 접근)
+      # .env 주소 덮어쓰기 - 로컬/Docker 동시 서비스 설계
       - OLLAMA_URL=http://host.docker.internal:11434
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # compose up 시 실행 (--reload 추가)
 
   frontend:
     build: .
     container_name: llm-recommender-ui
-    restart: unless-stopped
+    restart: unless-stopped #크래시 시 자동 재시작
     ports:
       - "8501:8501"
     volumes:
-      - .:/app
-    depends_on:
+      - .:/app #실시간 동기화
+    depends_on: # app 서비스 의존
       - app
     env_file:
       - .env
     environment:
-      # Docker 내부 네트워크로 FastAPI에 연결 (.env의 BACKEND_URL보다 우선)
+      # .env 주소 덮어쓰기 - 로컬/Docker 동시 서비스 설계
       - BACKEND_URL=http://app:8000
     command: streamlit run frontend.py --server.port 8501 --server.address 0.0.0.0
 
 volumes:
-  hf_cache:   # BGE-M3-ko + bge-reranker 모델 캐시 (재빌드 시 재다운로드 방지)
+  hf_cache:   # Docker 저장공간 생성

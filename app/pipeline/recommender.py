@@ -1,3 +1,6 @@
+# RAG 파이프라인 핵심 — 분류 → 벡터 검색 → 크롤링 → 리랭킹 → LLM 생성 순서로 실행
+import os
+import json
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, AsyncGenerator
 from app.services.query_classifier import query_classifier
@@ -8,20 +11,32 @@ from crawler.huggingface_crawler import HuggingFaceCrawler
 from crawler.github_crawler import github_crawler
 from crawler.pricing_crawler import pricing_crawler
 from crawler.data_processor import data_processor
+from app.core.config import settings
 
-# 인메모리 쿼리 캐시 — 같은 키워드는 14일 내 재크롤링 안 함
-_crawl_cache: Dict[str, datetime] = {}
-_TTL_DAYS = 14
-
-# 앱 실행 중 한 번만 로드
-_pricing_cache: Dict | None = None
+_TTL_DAYS = settings.CACHE_TTL_DAYS
+_CRAWL_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "crawl_cache.json")
+_PRICING_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "pricing_cache.json")
+_PRICING_TTL_DAYS = 1  # 가격 정보는 1일마다 갱신
 
 
-async def _get_pricing():
-    global _pricing_cache
-    if _pricing_cache is None:
-        _pricing_cache = await pricing_crawler.load_openrouter_prices()
-    return _pricing_cache
+def _load_crawl_cache() -> Dict[str, datetime]:
+    if not os.path.exists(_CRAWL_CACHE_FILE):
+        return {}
+    try:
+        with open(_CRAWL_CACHE_FILE, "r", encoding="utf-8") as f:
+            return {k: datetime.fromisoformat(v) for k, v in json.load(f).items()}
+    except Exception:
+        return {}
+
+
+def _save_crawl_cache():
+    os.makedirs(os.path.dirname(_CRAWL_CACHE_FILE), exist_ok=True)
+    with open(_CRAWL_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump({k: v.isoformat() for k, v in _crawl_cache.items()}, f)
+
+
+# 앱 시작 시 파일에서 캐시 복원 — 재시작해도 TTL 유지
+_crawl_cache: Dict[str, datetime] = _load_crawl_cache()
 
 
 def _is_recently_crawled(keyword: str) -> bool:
@@ -32,6 +47,38 @@ def _is_recently_crawled(keyword: str) -> bool:
 
 def _mark_crawled(keyword: str):
     _crawl_cache[keyword] = datetime.now()
+    _save_crawl_cache()
+
+
+def _load_pricing_cache() -> Dict | None:
+    if not os.path.exists(_PRICING_CACHE_FILE):
+        return None
+    try:
+        with open(_PRICING_CACHE_FILE, "r", encoding="utf-8") as f:
+            saved = json.load(f)
+        saved_at = datetime.fromisoformat(saved["saved_at"])
+        if datetime.now() - saved_at > timedelta(days=_PRICING_TTL_DAYS):
+            return None  # 만료
+        return saved["data"]
+    except Exception:
+        return None
+
+
+def _save_pricing_cache(data: Dict):
+    os.makedirs(os.path.dirname(_PRICING_CACHE_FILE), exist_ok=True)
+    with open(_PRICING_CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump({"saved_at": datetime.now().isoformat(), "data": data}, f)
+
+
+_pricing_cache: Dict | None = _load_pricing_cache()
+
+
+async def _get_pricing():
+    global _pricing_cache
+    if not _pricing_cache:
+        _pricing_cache = await pricing_crawler.load_openrouter_prices()
+        _save_pricing_cache(_pricing_cache)
+    return _pricing_cache
 
 
 def _normalize_confidence(scores: List[float]) -> List[str]:
@@ -149,7 +196,7 @@ class RecommenderPipeline:
         if not documents:
             return [], [], []
 
-        reranked = self.reranker.rerank(query, documents, metadatas, top_n=3)
+        reranked = self.reranker.rerank(query, documents, metadatas, top_n=5)
         confidences = _normalize_confidence([r["score"] for r in reranked])
         table_data = _build_model_table(reranked, confidences)
         refs = [r["text"] for r in reranked]
@@ -249,7 +296,7 @@ class RecommenderPipeline:
             yield {"type": "done", "category": category}
             return
 
-        yield {"type": "status", "step": 3, "message": "결과 최적화 완료 ✓"}
+        yield {"type": "status", "step": 3, "message": "결과 최적화 완료"}
         yield {"type": "table", "category": category, "data": table_data}
 
         yield {"type": "status", "step": 4, "message": "답변 생성 중..."}

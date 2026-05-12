@@ -1,3 +1,4 @@
+# OpenRouter API 크롤러 — 상업 모델 가격(per 1M tokens)과 컨텍스트 길이 수집
 import httpx
 from typing import Dict
 
@@ -25,8 +26,7 @@ class PricingCrawler:
     async def load_openrouter_prices(self) -> Dict[str, Dict]:
         """
         OpenRouter API에서 모델 가격 정보를 가져옵니다.
-        반환: {정규화된_모델명: {"price_display": str, "context_length": int,
-                                "prompt_price": float, "completion_price": float}}
+        반환: {정규화된_모델명: {"price_display": str, "context_length": int}}
         """
         print("[*] OpenRouter 가격 데이터 로딩 중...")
 
@@ -51,8 +51,6 @@ class PricingCrawler:
             result[_normalize(model_id)] = {
                 "price_display": _format_price(prompt_p, completion_p),
                 "context_length": item.get("context_length", 0),
-                "prompt_price": _safe_float(prompt_p),
-                "completion_price": _safe_float(completion_p),
             }
 
         print(f"[*] OpenRouter 가격 로드 완료: {len(result)}개 모델")
@@ -72,16 +70,7 @@ class PricingCrawler:
         return {
             "price_display": "무료 (오픈소스)",
             "context_length": 0,
-            "prompt_price": 0.0,
-            "completion_price": 0.0,
         }
-
-
-def _safe_float(val) -> float:
-    try:
-        return float(val)
-    except (ValueError, TypeError):
-        return 0.0
 
 
 pricing_crawler = PricingCrawler()

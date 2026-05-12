@@ -1,3 +1,4 @@
+# /api/chat (단일 응답)와 /api/chat/stream (SSE 스트리밍) 엔드포인트 정의
 import json
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
@@ -24,9 +25,6 @@ router = APIRouter()
 async def chat(request: ChatRequest):
     try:
         result = await recommender_pipeline.run(request.message)
-
-        if isinstance(result, str):
-            return ChatResponse(category="GENERAL", answer=result, references=[], table_data=[], status="NO_DOCS")
 
         if not result.get("references") and not result.get("table_data"):
             return ChatResponse(

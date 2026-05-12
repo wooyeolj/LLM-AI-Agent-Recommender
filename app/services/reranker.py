@@ -1,3 +1,4 @@
+# BGE-reranker-v2-m3 Cross-Encoder — 벡터 검색 결과를 쿼리와 직접 비교해 관련도 순으로 재정렬
 from typing import List, Dict, Any
 from sentence_transformers import CrossEncoder
 from app.core.config import settings

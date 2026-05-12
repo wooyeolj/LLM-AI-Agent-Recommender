@@ -52,7 +52,7 @@ async def main():
     await data_processor.process_and_save(agents, item_type="AGENT")
 
     print("\n" + "=" * 50)
-    print("  ✅ 초기 DB 구축 완료!")
+    print("  [OK] 초기 DB 구축 완료!")
     print(f"     모델: {len(models)}개 | 에이전트: {len(agents)}개")
     print("=" * 50)
 

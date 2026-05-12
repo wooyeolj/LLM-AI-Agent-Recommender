@@ -1,3 +1,4 @@
+# ChromaDB 인터페이스 — llm_items / agent_items 컬렉션 관리, cosine 유사도 검색
 import chromadb
 from app.core.config import settings
 from app.services.embedder import embedder
@@ -40,9 +41,9 @@ class VectorStore:
                 documents=texts,
                 metadatas=metadatas,
             )
-            print(f"✅ Upserted {len(ids)} {item_type} documents")
+            print(f"[OK] Upserted {len(ids)} {item_type} documents")
         except Exception as e:
-            print(f"❌ Error upserting documents: {e}")
+            print(f"[ERROR] Error upserting documents: {e}")
             raise e
 
     async def query(

@@ -1,7 +1,7 @@
 """
 수동 크롤링 트리거 스크립트
 
-특정 키워드로 HuggingFace를 검색하고 DB를 즉시 갱신합니다.
+특정 키워드로 HuggingFace를 검색하고 DB를 즉시 갱신
 실행: python scripts/run_crawler.py [검색어]
 예:  python scripts/run_crawler.py DeepSeek
      python scripts/run_crawler.py text-to-image
@@ -36,7 +36,7 @@ async def run(search_query: str = None):
 
     print(f"[*] {len(raw_data)}개 모델 수집 완료. DB 저장 중...")
     await data_processor.process_and_save(raw_data, item_type="MODEL")
-    print("[✅] 완료")
+    print("[OK] 완료")
 
 
 if __name__ == "__main__":

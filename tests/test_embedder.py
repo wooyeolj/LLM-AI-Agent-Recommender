@@ -1,28 +1,26 @@
+# 임베딩 모델(BGE-m3-ko)이 텍스트를 벡터로 정상 변환하는지 확인
 import sys
 import os
 
-# 프로젝트 루트 경로를 인식하게 합니다.
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.services.embedder import embedder
 
+
 def test_run():
-    print("--- 임베딩 테스트 시작 ---")
-    
-    test_text = "AI 에이전트와 LLM 모델의 차이점은 무엇인가요?"
-    
-    # 1. 벡터 변환
-    vector = embedder.get_embedding(test_text)
-    
-    # 2. 결과 확인
-    print(f"입력 문장: {test_text}")
-    print(f"벡터 차원 수: {len(vector)}") # BGE-M3는 보통 1024차원입니다.
-    print(f"앞부분 데이터 (5개): {vector[:5]}")
-    
+    print("--- 임베딩 테스트 ---")
+
+    text = "AI 에이전트와 LLM 모델의 차이점은 뭐야?"
+    vector = embedder.get_embedding(text)
+
+    print(f"입력: {text}")
+    print(f"차원: {len(vector)} | 앞부분: {vector[:3]}")
+
     if len(vector) > 0:
-        print("\n✅ 임베딩 테스트 성공!")
+        print("임베딩 테스트 성공!")
     else:
-        print("\n❌ 임베딩 실패!")
+        print("임베딩 테스트 실패")
+
 
 if __name__ == "__main__":
     test_run()

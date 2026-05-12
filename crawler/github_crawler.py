@@ -1,3 +1,4 @@
+# GitHub API 크롤러 — 에이전트 프레임워크 별점 / 업데이트일 / LLM 지원 여부 수집
 import httpx
 from typing import List, Dict
 from app.core.config import settings
@@ -31,6 +32,9 @@ AGENT_REPOS = [
     ("OpenBMB/ChatDev",          "소프트웨어 개발 멀티에이전트"),
     ("assafelovic/gpt-researcher","자율 웹 리서치 에이전트"),
     ("yoheinakajima/babyagi",    "태스크 분해 자율 에이전트"),
+    ("pydantic/pydantic-ai",     "타입 안전 에이전트, 구조화된 출력"),
+    ("huggingface/smolagents",   "HuggingFace 공식 경량 에이전트 프레임워크"),
+    ("stanfordnlp/dspy",         "LLM 파이프라인 프로그래밍, 자동 프롬프트 최적화"),
 ]
 
 
@@ -81,7 +85,7 @@ class GitHubCrawler:
                         "language": data.get("language") or "Python",
                         "license": (data.get("license") or {}).get("spdx_id", "Unknown"),
                     })
-                    print(f"[*] {repo_path}: ⭐{stars:,}")
+                    print(f"[*] {repo_path}: stars={stars:,}")
                 except Exception as e:
                     print(f"[!] {repo_path} 수집 실패: {e}")
                     results.append(self._fallback(repo_path, use_case))

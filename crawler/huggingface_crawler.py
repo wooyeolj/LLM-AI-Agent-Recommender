@@ -1,10 +1,9 @@
+# HuggingFace REST API 크롤러 — 모델 검색(실시간용)과 다운로드 상위 모델 수집(초기 DB용)
 import httpx
 from typing import List, Dict
 
 HF_API_BASE = "https://huggingface.co/api/models"
 HEADERS = {"Accept": "application/json"}
-
-COMMERCIAL_ORGS = {"openai", "anthropic", "cohere", "ai21", "mistralai-commercial"}
 
 # HF pipeline_tag 값 목록 — 이 키워드는 search 대신 pipeline_tag 파라미터로 전달
 HF_PIPELINE_TAGS = {
@@ -15,13 +14,6 @@ HF_PIPELINE_TAGS = {
     "object-detection", "image-classification", "image-segmentation",
     "feature-extraction", "conversational",
 }
-
-
-def _infer_cost(model_id: str, tags: list) -> str:
-    org = model_id.split("/")[0].lower() if "/" in model_id else ""
-    if org in COMMERCIAL_ORGS or "api" in tags:
-        return "API 유료"
-    return "무료 (오픈소스)"
 
 
 def _parse_item(item: dict) -> dict | None:
@@ -48,7 +40,7 @@ def _parse_item(item: dict) -> dict | None:
         "likes": item.get("likes", 0),
         "tags": tags,
         "createdAt": item.get("createdAt", ""),
-        "cost": _infer_cost(model_id, tags),
+        "cost": "무료 (오픈소스)",
     }
 
 

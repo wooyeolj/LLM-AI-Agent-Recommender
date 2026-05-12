@@ -1,20 +1,23 @@
-# 웹 프레임워크 및 프론트엔드
-fastapi>=0.109.0
-uvicorn[standard]>=0.27.0
-pydantic>=2.5.0
-pydantic-settings>=2.1.0
-streamlit>=1.30.0
+# Python 패키지 목록
+# pip install -r requirements.txt
 
-# LLM 연동 및 비동기 HTTP
-httpx>=0.26.0
-python-dotenv>=1.0.0
+# 웹 프레임워크 및 서버
+fastapi==0.136.0          # API 서버 프레임워크
+uvicorn[standard]==0.44.0 # FastAPI 실행 ASGI 서버
+pydantic==2.13.3          # 요청/응답 데이터 검증
+pydantic-settings==2.14.0 # .env 파일 > Python 설정 객체 변환
+streamlit==1.56.0         # UI 프레임워크
 
-# 머신러닝 임베딩 & 리랭킹
-sentence-transformers>=2.3.0
-chromadb>=0.4.22
+# HTTP 통신
+httpx==0.28.1             # 비동기 HTTP 클라이언트 (Ollama, HuggingFace, GitHub API 호출)
+python-dotenv==1.2.2      # .env 파일 로드
+
+# AI 모델
+sentence-transformers==5.4.1  # 임베딩(BGE-M3-ko) + 리랭커(CrossEncoder)
+chromadb==1.5.8               # 벡터 DB (임베딩 저장 및 유사도 검색)
 
 # 데이터 처리
-pandas>=2.0.0
+pandas==2.3.3             # 추천 결과 테이블 처리
 
-#pytorch (cpu 전용)
-torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+# PyTorch CPU 전용 (GPU 버전 설치 방지)
+torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu

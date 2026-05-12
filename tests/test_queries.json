@@ -1,0 +1,65 @@
+{
+  "description": "쿼리 분류 테스트",
+  "queries": [
+    {
+      "id": 1,
+      "query": "무료로 내가 수집한 자료들로 발표에 사용할 ppt를 만들어줘",
+      "expected_category": ["MODEL", "AGENT"],
+      "expect_table": true
+    },
+    {
+      "id": 2,
+      "query": "그림을 잘 그리는 저렴한 AI 추천해줘",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 3,
+      "query": "내 자금관리를 도와줄 비서가 필요해",
+      "expected_category": "AGENT",
+      "expect_table": true
+    },
+    {
+      "id": 4,
+      "query": "내 물리학 수업 과제를 도와줄 AI가 필요해",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 5,
+      "query": "하루에 물을 얼마나 마시면 좋아?",
+      "expected_category": "GENERAL",
+      "expect_table": false
+    },
+    {
+      "id": 6,
+      "query": "한국어 잘하는 무료 LLM 추천해줘",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 7,
+      "query": "코딩 잘하는 ai는 뭐가 있어?",
+      "expected_category": "MODEL",
+      "expect_table": true
+    },
+    {
+      "id": 8,
+      "query": "매일 아침 뉴스를 요약해서 자동으로 보내줘",
+      "expected_category": "AGENT",
+      "expect_table": true
+    },
+    {
+      "id": 9,
+      "query": "내 스케줄을 도와줄 시스템이 필요해",
+      "expected_category": "AGENT",
+      "expect_table": true
+    },
+    {
+      "id": 10,
+      "query": "파이썬이랑 자바 중 어느 것이 취업에 유리할까?",
+      "expected_category": "GENERAL",
+      "expect_table": false
+    }
+  ]
+}

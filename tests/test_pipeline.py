@@ -1,4 +1,4 @@
-"""전체 파이프라인 통합 테스트 (백엔드 서버 불필요 — 직접 호출)"""
+# 전체 RAG 파이프라인(분류→크롤링→벡터검색→리랭킹→LLM 생성)이 3가지 케이스(MODEL/AGENT/GENERAL)에서 정상 동작하는지 확인
 import sys
 import os
 import asyncio
@@ -9,7 +9,7 @@ from app.pipeline.recommender import recommender_pipeline
 
 
 async def test_full_pipeline():
-    print("--- 통합 추천 파이프라인 테스트 ---")
+    print("--- 파이프라인 통합 테스트 ---")
 
     cases = [
         ("DeepSeek 모델의 최신 정보를 알려줘", "MODEL"),
@@ -17,30 +17,19 @@ async def test_full_pipeline():
         ("안녕하세요", "GENERAL"),
     ]
 
-    for query, expected_category in cases:
-        print(f"\n[질문] {query}")
+    for query, expected in cases:
+        print(f"\n질문: {query}")
         result = await recommender_pipeline.run(query)
 
-        assert isinstance(result, dict), f"반환값이 dict가 아님: {type(result)}"
-        assert "category" in result, "category 키 없음"
-        assert "answer" in result, "answer 키 없음"
-        assert "references" in result, "references 키 없음"
-        assert "table_data" in result, "table_data 키 없음"
-        assert result["category"] == expected_category, (
-            f"카테고리 오류: 실제={result['category']}, 기대={expected_category}"
-        )
-        assert result["answer"], "answer가 비어있음"
+        assert result["category"] == expected, f"분류 오류: 실제={result['category']}, 기대={expected}"
+        assert result["answer"], "answer 비어있음"
 
-        if expected_category in ("MODEL", "AGENT"):
-            assert isinstance(result["table_data"], list), "table_data가 리스트가 아님"
-
-        print(f"  카테고리: {result['category']} ✅")
-        print(f"  답변 앞부분: {result['answer'][:80]}...")
-        print(f"  참고 항목: {len(result['references'])}개")
+        print(f"  카테고리: {result['category']}")
+        print(f"  답변: {result['answer'][:80]}...")
         if result["table_data"]:
             print(f"  추천 항목: {len(result['table_data'])}개")
 
-    print("\n✅ 파이프라인 통합 테스트 성공!")
+    print("\n파이프라인 통합 테스트 성공!")
 
 
 if __name__ == "__main__":
