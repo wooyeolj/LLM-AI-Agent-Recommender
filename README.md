@@ -28,17 +28,17 @@
 
 ## 프로젝트 소개
 
-이 프로젝트는 AI 도구의 선택 장벽을 낮추기 위해 사용자의 자연어 질문을 기반으로 최적의 AI 도구를 찾는다.
+본 프로젝트는 AI 도구의 선택 장벽을 낮추기 위해 사용자의 자연어 질문을 기반으로 최적의 AI 도구를 찾는다.
 빈 답변을 방지하기 위해 최초 1회 `init_db.py`로 초기 DB를 구성하며, 이후 요청마다 **분류–검색–리랭킹–생성** 의 4단계 파이프라인이 동작한다.
 
 [초기화] `init_db.py` 실행 시 HuggingFace, OpenRouter, GitHub API에서 데이터를 수집해 ChromaDB에 저장
 
 [요청 처리]
-1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)**으로 분류 (MODEL / AGENT / GENERAL)
-2. 질문을 **임베딩(BGE-m3-ko)**해 ChromaDB에서 유사 후보 20개 검색
-3. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API**에서  실시간 수집 후 DB UPSERT (UPDATE & INSERT)
-4. **리랭킹(BGE-reranker-v2-m3)**으로 쿼리 관련도를 비교해 상위 3~5개 선별
-5. **Ollama(gemma3:4b)**가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
+1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)** 으로 분류 (MODEL / AGENT / GENERAL)
+2. 질문을 **임베딩(BGE-m3-ko)** 해 ChromaDB에서 유사 후보 20개 검색
+3. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API** 에서  실시간 수집 후 DB UPSERT (UPDATE & INSERT)
+4. **리랭킹(BGE-reranker-v2-m3)** 으로 쿼리 관련도를 비교해 상위 3~5개 선별
+5. **Ollama(gemma3:4b)** 가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
 
 외부 유료 API 없이 완전 로컬 실행이 가능하며, Docker와 로컬 환경을 모두 지원한다.
 
