@@ -16,7 +16,6 @@ from app.core.config import settings
 _TTL_DAYS = settings.CACHE_TTL_DAYS
 _CRAWL_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "crawl_cache.json")
 _PRICING_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "pricing_cache.json")
-_PRICING_TTL_DAYS = 1  # 가격 정보는 1일마다 갱신
 
 
 def _load_crawl_cache() -> Dict[str, datetime]:
@@ -57,7 +56,7 @@ def _load_pricing_cache() -> Dict | None:
         with open(_PRICING_CACHE_FILE, "r", encoding="utf-8") as f:
             saved = json.load(f)
         saved_at = datetime.fromisoformat(saved["saved_at"])
-        if datetime.now() - saved_at > timedelta(days=_PRICING_TTL_DAYS):
+        if datetime.now() - saved_at > timedelta(days=_TTL_DAYS):
             return None  # 만료
         return saved["data"]
     except Exception:
