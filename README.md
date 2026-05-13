@@ -115,10 +115,10 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 | **Retrieve & Rerank** ChromaDB(20개) → CrossEncoder(MODEL 5개 / AGENT 3개) | CrossEncoder만 전체 DB에 적용 | CrossEncoder는 쿼리-문서 쌍을 하나씩 비교하므로 문서 수에 비례해 시간이 증가. ChromaDB로 후보를 먼저 좁혀 정밀도 및 속도 확보 |
 | **카테고리 분류** MODEL / AGENT / GENERAL | 분류 없음 또는 2분류 | MODEL/AGENT는 각각 다른 DB로 저장 및 검색이 이뤄지고, GENERAL은 LLM으로 바로 처리해 불필요한 검색을 방지 |
 | **분류 구조** 키워드 1차 → LLM fallback | 모든 쿼리를 LLM으로 분류 | "LLM", "에이전트" 등 명확한 키워드가 있는 쿼리는 수ms 내 분류 가능. LLM 호출(3~10초)은 키워드 분류가 불가능한 경우에만 발생해 평균 응답 시간 단축 |
-| **SSE 스트리밍** | 일반 HTTP 또는 WebSocket | 본 서비스는 서버→클라이언트 단방향 스트리밍만 필요. SSE는 HTTP 표준으로 FastAPI `StreamingResponse`로 간단히 구현되어 사용자의 체감 대기 시간 단축|
+| **SSE 스트리밍** | 일반 HTTP 또는 WebSocket | 본 서비스는 서버→클라이언트 단방향 스트리밍만 필요. SSE는 HTTP 표준으로 FastAPI `StreamingResponse`로 간단히 구현되어 사용자의 체감 대기 시간 단축 |
 | **싱글톤 패턴** (임베딩 · 리랭커) | 요청마다 모델 로드 | BGE-m3-ko, CrossEncoder 각각 초기 로드에 10~30초 소요. 앱 시작 시 한 번만 로드하는 싱글톤 구조로 추가 지연 방지 |
-| **한국어 태그 보강** (`_PIPELINE_KO`) | 영어 원문 그대로 저장 | "그림 그려줘"와 "text-to-image" 간 임베딩 거리가 큼. 한국어 동의어("이미지생성 그림생성")를 문서에 주입해 한국어 쿼리와 영어 메타데이터 간 크로스링구얼 매칭 정확도 향상 |
-| **Ollama 로컬 LLM** | OpenAI / Claude API | API 키 없이 누구나 즉시 실행 가능해 포트폴리오 재현성 확보. `OLLAMA_URL` 환경변수 하나로 클라우드 LLM 교체도 가능해 유연성 유지 |
+| **한국어 태그 보강** (`_PIPELINE_KO`) | 영어 원문 그대로 저장 | "그림 그려줘"와 "text-to-image" 간 임베딩 거리가 큼. 한국어 동의어("이미지생성 그림생성")를 미리 매핑해 한국어 쿼리와 태그 간 매칭 정확도 향상 |
+| **Ollama 로컬 LLM** | OpenAI / Claude API | API 키 없이 누구나 실행 가능해 접근성 확보 및 모델 교체 유연성 제공 |
 
 ---
 
