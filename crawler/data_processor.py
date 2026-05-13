@@ -5,18 +5,24 @@ from datetime import datetime
 
 # pipeline_tag → 한국어 설명 매핑 (reranker의 한국어 쿼리 매칭 보조)
 _PIPELINE_KO = {
-    "text-generation":              "텍스트생성 언어모델 LLM 대화 코딩",
-    "text-to-image":                "이미지생성 그림생성 텍스트-이미지 image generation",
-    "image-to-text":                "이미지설명 이미지이해 캡셔닝 image understanding",
-    "image-to-image":               "이미지변환 이미지편집 image editing",
-    "text-to-speech":               "음성합성 TTS voice synthesis",
-    "text-to-audio":                "오디오생성 음악생성 audio generation",
-    "automatic-speech-recognition": "음성인식 STT speech recognition",
-    "translation":                  "번역 translation",
-    "summarization":                "요약 summarization",
-    "question-answering":           "질문답변 QA question answering",
-    "image-classification":         "이미지분류 image classification",
-    "object-detection":             "객체탐지 object detection",
+    "text-generation":              "텍스트생성 언어모델 LLM 대화 글쓰기 작문 창작",
+    "text-to-image":                "이미지생성 그림생성 텍스트-이미지 그림그리기 일러스트 AI그림",
+    "image-to-text":                "이미지설명 이미지이해 이미지분석 사진설명 문자인식 OCR",
+    "image-to-image":               "이미지변환 이미지편집 스타일변환 사진편집 포토샵 이미지보정",
+    "text-to-speech":               "TTS 텍스트읽기 음성변환 목소리생성",
+    "text-to-audio":                "오디오생성 음악생성 음악작곡",
+    "automatic-speech-recognition": "음성인식 STT 음성텍스트변환 받아쓰기 자막생성",
+    "translation":                  "번역 언어번역 자동번역",
+    "summarization":                "요약 문서요약 텍스트요약 뉴스요약 내용정리",
+    "question-answering":           "질문답변 질의응답 QA FAQ 검색",
+    "image-classification":         "이미지분류 사진분류 이미지인식 물체인식",
+    "object-detection":             "객체탐지 물체감지 사물인식 YOLO 감지",
+    "text-classification":          "텍스트분류 문서분류 자동분류",
+    "token-classification":         "개체명인식 정보추출 token",
+    "zero-shot-classification":     "제로샷분류 유연한분류 무학습분류",
+    "image-segmentation":           "이미지분할 영역분리 배경분리 세그멘테이션",
+    "feature-extraction":           "특징추출 임베딩 벡터추출",
+    "conversational":               "대화 챗봇 AI어시스턴트 상담 대화형AI",
 }
 
 
