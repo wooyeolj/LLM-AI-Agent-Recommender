@@ -143,13 +143,14 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 
 | 분류 | 기술 |
 |------|------|
+| 언어 | Python 3.11+ |
 | LLM | Ollama + gemma3:4b (로컬 실행) |
-| 임베딩 | dragonkue/BGE-m3-ko (한국어 특화) |
+| 임베딩 | dragonkue/BGE-m3-ko (한국어 특화 튜닝) |
 | 리랭킹 | BAAI/bge-reranker-v2-m3 |
-| 벡터 DB | ChromaDB (로컬 영구 저장) |
+| 벡터 DB | ChromaDB |
 | 백엔드 | FastAPI + uvicorn (SSE 스트리밍) |
 | 프론트엔드 | Streamlit |
-| 컨테이너 | Docker + docker-compose |
+| 컨테이너 | Docker |
 
 ---
 
@@ -158,29 +159,31 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 ```
 my-llm-project/
 ├── app/
-│   ├── api/routes.py          # FastAPI 엔드포인트 (일반 + SSE 스트리밍)
-│   ├── core/config.py         # 환경변수 관리 (pydantic-settings)
-│   ├── pipeline/recommender.py # RAG 파이프라인 (분류→검색→크롤→리랭→생성)
+│   ├── main.py                # FastAPI 앱 진입
+│   ├── api/routes.py          # FastAPI 엔드포인트
+│   ├── core/config.py         # 환경변수 관리
+│   ├── pipeline/recommender.py # RAG 파이프라인 (분류→검색→크롤링→리랭킹→생성)
 │   └── services/
-│       ├── embedder.py        # BGE-m3-ko 임베딩 (LRU 캐시 포함)
-│       ├── vector_store.py    # ChromaDB CRUD
-│       ├── reranker.py        # BGE-reranker-v2-m3
-│       ├── query_classifier.py # 키워드 분류 + LLM fallback
-│       └── ollama_client.py   # 일반/스트리밍 응답
+│       ├── embedder.py        # BGE-m3-ko 임베딩
+│       ├── vector_store.py    # ChromaDB 저장 및 검색
+│       ├── reranker.py        # BGE-reranker-v2-m3 리랭킹
+│       ├── query_classifier.py # 쿼리 분류
+│       └── ollama_client.py   # LLM 응답 생성
 ├── crawler/
-│   ├── huggingface_crawler.py # HF REST API (pipeline_tag 정확 필터링)
-│   ├── pricing_crawler.py     # OpenRouter API 가격 수집
-│   ├── github_crawler.py      # GitHub API 에이전트 프레임워크
-│   └── data_processor.py      # 크롤링 데이터 → ChromaDB 저장
+│   ├── huggingface_crawler.py # HF API 수집
+│   ├── openrouter_crawler.py  # OpenRouter API 수집
+│   ├── github_crawler.py      # GitHub API 수집
+│   └── data_processor.py      # 크롤링 데이터 가공 · 저장
 ├── scripts/
 │   ├── init_db.py             # 초기 DB 구축 (최초 1회)
 │   ├── run_crawler.py         # 수동 크롤링 트리거
 │   └── evaluate_queries.py    # 쿼리 분류 정확도 평가
 ├── tests/                     # 단위/통합 테스트
-├── frontend.py                # Streamlit UI (SSE 스트리밍 소비)
+├── frontend.py                # Streamlit UI (SSE 스트리밍) 
+├── .env.example               # 환경변수 템플릿
+├── requirements.txt
 ├── Dockerfile
-├── docker-compose.yml
-└── requirements.txt
+└── docker-compose.yml
 ```
 
 ---

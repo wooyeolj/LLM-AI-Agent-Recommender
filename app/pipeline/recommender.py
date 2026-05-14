@@ -9,7 +9,7 @@ from app.services.reranker import reranker
 from app.services.ollama_client import ollama_client
 from crawler.huggingface_crawler import HuggingFaceCrawler
 from crawler.github_crawler import github_crawler
-from crawler.pricing_crawler import pricing_crawler
+from crawler.openrouter_crawler import pricing_crawler
 from crawler.data_processor import data_processor
 from app.core.config import settings
 

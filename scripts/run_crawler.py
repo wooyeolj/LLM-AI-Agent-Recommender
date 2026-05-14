@@ -13,7 +13,7 @@ import asyncio
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crawler.huggingface_crawler import HuggingFaceCrawler
-from crawler.pricing_crawler import pricing_crawler
+from crawler.openrouter_crawler import pricing_crawler
 from crawler.data_processor import data_processor
 
 
