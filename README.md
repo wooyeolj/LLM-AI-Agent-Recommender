@@ -126,15 +126,15 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 
 ## 크롤링 전략
 
-| 소스 | 수집 항목 | 용도 |
-|------|----------|------|
-| **HuggingFace API** | 모델명, 설명, 다운로드수, 좋아요, 태그, 출시일 | LLM/이미지생성 등 모델 메타데이터 |
-| **OpenRouter API** | 가격(입출력 per 1M tokens), 컨텍스트 길이 | 상업 모델 가격 정보 |
-| **GitHub API** | 별점, 업데이트일, 지원 LLM, 로컬 지원 여부 | 에이전트 프레임워크 인기도 |
+| 소스 | 수집 항목 |
+|------|----------|
+| **HuggingFace API** | 모델명, 설명, pipeline_tag, 다운로드수, 좋아요, 태그, 출시일 |
+| **OpenRouter API** | 가격(입출력 per 1M tokens), 컨텍스트 길이 |
+| **GitHub API** | 별점, 업데이트일, 지원 LLM, 로컬 지원 여부, 난이도, 설명, 사용 사례 |
 
 - 키워드가 HuggingFace pipeline tag(`text-to-image`, `translation` 등)이면 `pipeline_tag` 파라미터로 정확히 필터링
 - 동일 키워드는 14일간 재크롤링 하지 않음 (파일 기반 캐시 — 앱 재시작 후에도 TTL 유지)
-- 임베딩 결과는 LRU 방식으로 512개까지 메모리 캐싱
+- 임베딩 결과는 FIFO 방식으로 512개까지 메모리 캐싱
 
 ---
 
