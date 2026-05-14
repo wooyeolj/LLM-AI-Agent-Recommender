@@ -51,7 +51,7 @@
     },
     {
       "id": 9,
-      "query": "내 스케줄을 도와줄 시스템이 필요해",
+      "query": "내 일정 관리를 도와줄 시스템이 필요해",
       "expected_category": "AGENT",
       "expect_table": true
     },

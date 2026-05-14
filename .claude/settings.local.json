@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:lmarena.ai)",
+      "WebFetch(domain:arena.ai)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\myllm\\\\my-llm-project\" -Recurse -File | Where-Object { $_.Extension -eq '.py' -or $_.Name -in @\\('requirements.txt', 'docker-compose.yml', '.env.example', 'Dockerfile', 'pyproject.toml', 'poetry.lock'\\) } | Sort-Object FullName)",
+      "PowerShell(git -C c:\\\\myllm\\\\my-llm-project diff app/core/config.py crawler/data_processor.py scripts/evaluate_queries.py)"
+    ]
+  }
+}
