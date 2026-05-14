@@ -58,7 +58,6 @@ def _render_table(category: str, data: list):   # 백엔드에서 받은 추천 
                 "사용 사례": item.get("use_case", "-"),
                 "지원 LLM": item.get("supported_llms", "-"),
                 "로컬 지원": "Y" if item.get("local_support") else "N",
-                "난이도": item.get("difficulty", "-"),
                 "GitHub Stars": f"{item.get('github_stars', 0):,}",
                 "연관성": item.get("relevance", "-"),
                 "링크": item.get("url", ""),

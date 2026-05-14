@@ -130,7 +130,7 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 |------|----------|
 | **HuggingFace API** | 모델명, 설명, pipeline_tag, 다운로드수, 좋아요, 태그, 출시일 |
 | **OpenRouter API** | 가격(입출력 per 1M tokens), 컨텍스트 길이 |
-| **GitHub API** | 별점, 업데이트일, 지원 LLM, 로컬 지원 여부, 난이도, 설명, 사용 사례 |
+| **GitHub API** | 별점, 업데이트일, 지원 LLM, 로컬 지원 여부, 설명, 사용 사례 |
 
 - 키워드가 HuggingFace pipeline tag(`text-to-image`, `translation` 등)이면 `pipeline_tag` 파라미터로 정확히 필터링
 - 동일 키워드는 14일간 재크롤링 하지 않음 (파일 기반 캐시 — 앱 재시작 후에도 TTL 유지)
