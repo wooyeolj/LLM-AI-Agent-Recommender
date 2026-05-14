@@ -29,17 +29,19 @@
 ## 프로젝트 소개
 
 본 프로젝트는 AI 도구의 선택 장벽을 낮추기 위해 사용자의 자연어 질문을 기반으로 최적의 AI 도구를 찾는다.
-빈 답변을 방지하기 위해 최초 1회 `init_db.py`로 초기 DB를 구성하며, 이후 요청마다 **분류–검색–리랭킹–생성** 의 4단계 파이프라인이 동작한다.
+최초 1회 `init_db.py`로 초기 DB를 구성하며, 이후 요청마다 **분류–검색–리랭킹–생성** 의 4단계 파이프라인이 동작한다.
 
-[초기화] 
+[초기화]
+
 `init_db.py` 실행 시 HuggingFace, OpenRouter, GitHub API에서 데이터를 수집해 ChromaDB에 저장
 
 [요청 처리]
+
 1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)** 으로 분류 (MODEL / AGENT / GENERAL)
 2. 질문을 **임베딩(BGE-m3-ko)** 해 ChromaDB에서 유사 후보 20개 검색
-3. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API** 에서 실시간 수집 후 DB UPSERT (UPDATE & INSERT)
-4. **리랭킹(BGE-reranker-v2-m3)** 으로 쿼리 관련도를 비교해 상위 3~5개 선별
-5. **Ollama(gemma3:4b)** 가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
+2-2. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API** 에서 실시간 수집 후 DB UPSERT (UPDATE & INSERT)
+3. **리랭킹(BGE-reranker-v2-m3)** 으로 쿼리 관련도를 비교해 상위 3~5개 선별
+4. **Ollama(gemma3:4b)** 가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
 
 외부 유료 API 없이 완전 로컬 실행이 가능하며, Docker와 로컬 환경을 모두 지원한다.
 
@@ -118,7 +120,7 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 | **SSE 스트리밍** | 일반 HTTP 또는 WebSocket | 본 서비스는 서버→클라이언트 단방향 스트리밍만 필요. SSE는 HTTP 표준으로 FastAPI `StreamingResponse`로 간단히 구현되어 사용자의 체감 대기 시간 단축 |
 | **싱글톤 패턴** (임베딩 · 리랭커) | 요청마다 모델 로드 | BGE-m3-ko, CrossEncoder 각각 초기 로드에 10~30초 소요. 앱 시작 시 한 번만 로드하는 싱글톤 구조로 추가 지연 방지 |
 | **한국어 태그 보강** (`_PIPELINE_KO`) | 영어 원문 그대로 저장 | "그림 그려줘"와 "text-to-image" 간 임베딩 거리가 큼. 한국어 동의어("이미지생성 그림생성")를 미리 매핑해 한국어 쿼리와 태그 간 매칭 정확도 향상 |
-| **Ollama 로컬 LLM** | OpenAI / Claude API | API 키 없이 누구나 실행 가능해 접근성 확보 및 모델 교체 유연성 제공 |
+| **Ollama 로컬 LLM** | LLM API | API 키 없이 누구나 실행 가능해 접근성 확보 및 모델 교체 유연성 제공 |
 
 ---
 
