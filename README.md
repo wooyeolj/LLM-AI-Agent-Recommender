@@ -49,10 +49,24 @@
 
 ## 프로젝트 데모
 
-<img width="1499" height="813" alt="Animation" src="https://github.com/user-attachments/assets/0da8730a-0b4a-43f0-8279-4ac8502bc206" />
+<img width="1500" alt="Animation" src="https://github.com/user-attachments/assets/0da8730a-0b4a-43f0-8279-4ac8502bc206" />
 
+<br>
 
-<img width="1497" height="801" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" />
+<table>
+  <tr>
+    <td><img width="500" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" /></td>
+    <td><b>MODEL</b><br>LLM 모델 추천 — 순위, 비용, 출시일, 다운로드 수 비교</td>
+  </tr>
+  <tr>
+    <td><img width="500" alt="에이전트" src="https://github.com/user-attachments/assets/cd1de979-b15d-4bc3-bdbf-ea29f05609f2" /></td>
+    <td><b>AGENT</b><br>AI 에이전트 프레임워크 추천 — 사용 사례, 지원 LLM, GitHub 별점 비교</td>
+  </tr>
+  <tr>
+    <td><img width="500" alt="제네럴" src="https://github.com/user-attachments/assets/8323fa66-773c-4f85-8683-4d5ed611533b" /></td>
+    <td><b>GENERAL</b><br>AI 무관 일반 질문 — 테이블 없이 LLM 직접 답변</td>
+  </tr>
+</table>
 
 
 
