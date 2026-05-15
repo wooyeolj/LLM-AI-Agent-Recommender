@@ -49,7 +49,15 @@
 
 ## 프로젝트 데모
 
-> 스크린샷 / GIF 추가 예정
+<img width="1499" height="813" alt="Animation" src="https://github.com/user-attachments/assets/0da8730a-0b4a-43f0-8279-4ac8502bc206" />
+
+
+<img width="1497" height="801" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" />
+
+
+
+
+
 
 ---
 
