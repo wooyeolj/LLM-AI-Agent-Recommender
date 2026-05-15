@@ -55,19 +55,27 @@
 
 <table>
   <tr>
+    <td colspan="2"><b>질문 :</b> 그림을 잘 그리는 저렴한 AI 추천해줘 &nbsp;&nbsp; <b>기대 카테고리 :</b> MODEL</td>
+  </tr>
+  <tr>
     <td width="90%"><img width="100%" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" /></td>
     <td width="10%" align="center"><b>MODEL</b></td>
+  </tr>
+  <tr>
+    <td colspan="2"><b>질문 :</b> 매일 아침 뉴스를 요약해서 자동으로 보내줘 &nbsp;&nbsp; <b>기대 카테고리 :</b> AGENT</td>
   </tr>
   <tr>
     <td width="90%"><img width="100%" alt="에이전트" src="https://github.com/user-attachments/assets/cd1de979-b15d-4bc3-bdbf-ea29f05609f2" /></td>
     <td width="10%" align="center"><b>AGENT</b></td>
   </tr>
   <tr>
+    <td colspan="2"><b>질문 :</b> 하루에 물을 얼마나 마시면 좋아? &nbsp;&nbsp; <b>기대 카테고리 :</b> GENERAL</td>
+  </tr>
+  <tr>
     <td width="90%"><img width="100%" alt="제네럴" src="https://github.com/user-attachments/assets/8323fa66-773c-4f85-8683-4d5ed611533b" /></td>
     <td width="10%" align="center"><b>GENERAL</b></td>
   </tr>
 </table>
-
 
 
 
