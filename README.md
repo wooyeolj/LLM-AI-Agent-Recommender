@@ -55,16 +55,16 @@
 
 <table>
   <tr>
-    <td><img width="500" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" /></td>
-    <td><b>MODEL</b><br>LLM 모델 추천 — 순위, 비용, 출시일, 다운로드 수 비교</td>
+    <td width="90%"><img width="100%" alt="모델" src="https://github.com/user-attachments/assets/7aea442f-0670-4b6a-8435-dddca05c3287" /></td>
+    <td width="10%" align="center"><b>MODEL</b></td>
   </tr>
   <tr>
-    <td><img width="500" alt="에이전트" src="https://github.com/user-attachments/assets/cd1de979-b15d-4bc3-bdbf-ea29f05609f2" /></td>
-    <td><b>AGENT</b><br>AI 에이전트 프레임워크 추천 — 사용 사례, 지원 LLM, GitHub 별점 비교</td>
+    <td width="90%"><img width="100%" alt="에이전트" src="https://github.com/user-attachments/assets/cd1de979-b15d-4bc3-bdbf-ea29f05609f2" /></td>
+    <td width="10%" align="center"><b>AGENT</b></td>
   </tr>
   <tr>
-    <td><img width="500" alt="제네럴" src="https://github.com/user-attachments/assets/8323fa66-773c-4f85-8683-4d5ed611533b" /></td>
-    <td><b>GENERAL</b><br>AI 무관 일반 질문 — 테이블 없이 LLM 직접 답변</td>
+    <td width="90%"><img width="100%" alt="제네럴" src="https://github.com/user-attachments/assets/8323fa66-773c-4f85-8683-4d5ed611533b" /></td>
+    <td width="10%" align="center"><b>GENERAL</b></td>
   </tr>
 </table>
 
