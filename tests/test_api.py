@@ -33,6 +33,8 @@ def test_chat_model():
     r = requests.post(f"{BASE_URL}/api/chat", json={"message": "코딩에 좋은 LLM 모델 추천해줘"}, timeout=300)
     data = r.json()
     assert data["category"] == "MODEL"
+    assert len(data["table_data"]) > 0, "MODEL 쿼리 결과 누락 — 검색/리랭킹 파이프라인 실패"
+    assert data["table_data"][0].get("name"), "모델명 누락"
     print(f"  카테고리: {data['category']} | 추천: {len(data['table_data'])}개")
     for m in data["table_data"]:
         print(f"    - {m.get('name')} | 비용: {m.get('cost')}")
@@ -43,6 +45,8 @@ def test_chat_agent():
     r = requests.post(f"{BASE_URL}/api/chat", json={"message": "자율 에이전트 프레임워크 추천해줘"}, timeout=300)
     data = r.json()
     assert data["category"] == "AGENT"
+    assert len(data["table_data"]) > 0, "AGENT 쿼리 결과가 비어있음 — 검색/리랭킹 파이프라인 실패"
+    assert data["table_data"][0].get("name"), "에이전트명 누락"
     print(f"  카테고리: {data['category']} | 추천: {len(data['table_data'])}개")
     for a in data["table_data"]:
         print(f"    - {a.get('name')} | 별점: {a.get('github_stars'):,}")
@@ -63,7 +67,9 @@ def test_stream():
 
     types = [e["type"] for e in chunks]
     assert "chunk" in types and "done" in types
-    print(f"  수신 이벤트: {types}")
+    answer = "".join(e.get("content", "") for e in chunks if e["type"] == "chunk")
+    assert answer.strip(), "스트리밍 응답 본문 공백!"
+    print(f"  수신 이벤트: {types} | 응답: {answer[:60]}...")
 
 
 if __name__ == "__main__":

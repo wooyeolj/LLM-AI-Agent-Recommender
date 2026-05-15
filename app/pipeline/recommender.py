@@ -7,7 +7,7 @@ from app.services.query_classifier import query_classifier
 from app.services.vector_store import vector_store
 from app.services.reranker import reranker
 from app.services.ollama_client import ollama_client
-from crawler.huggingface_crawler import HuggingFaceCrawler
+from crawler.huggingface_crawler import hf_crawler
 from crawler.github_crawler import github_crawler
 from crawler.openrouter_crawler import pricing_crawler
 from crawler.data_processor import data_processor
@@ -49,18 +49,18 @@ def _mark_crawled(keyword: str):
     _save_crawl_cache()
 
 
-def _load_pricing_cache() -> Dict | None:
+def _load_pricing_cache() -> tuple[Dict | None, datetime | None]:
     if not os.path.exists(_PRICING_CACHE_FILE):
-        return None
+        return None, None
     try:
         with open(_PRICING_CACHE_FILE, "r", encoding="utf-8") as f:
             saved = json.load(f)
         saved_at = datetime.fromisoformat(saved["saved_at"])
         if datetime.now() - saved_at > timedelta(days=_TTL_DAYS):
-            return None  # 만료
-        return saved["data"]
+            return None, None  # 만료
+        return saved["data"], saved_at
     except Exception:
-        return None
+        return None, None
 
 
 def _save_pricing_cache(data: Dict):
@@ -69,14 +69,22 @@ def _save_pricing_cache(data: Dict):
         json.dump({"saved_at": datetime.now().isoformat(), "data": data}, f)
 
 
-_pricing_cache: Dict | None = _load_pricing_cache()
+_pricing_cache, _pricing_cached_at = _load_pricing_cache()
+
+
+def _pricing_expired() -> bool:
+    # 크롤 캐시와 동일하게 호출 시점마다 TTL 검사 — 서버 장기 실행 시에도 갱신 보장
+    if _pricing_cached_at is None:
+        return True
+    return datetime.now() - _pricing_cached_at > timedelta(days=_TTL_DAYS)
 
 
 async def _get_pricing():
-    global _pricing_cache
-    if not _pricing_cache:
+    global _pricing_cache, _pricing_cached_at
+    if not _pricing_cache or _pricing_expired():
         _pricing_cache = await pricing_crawler.load_openrouter_prices()
         _save_pricing_cache(_pricing_cache)
+        _pricing_cached_at = datetime.now()
     return _pricing_cache
 
 
@@ -140,7 +148,7 @@ class RecommenderPipeline:
         self.store = vector_store
         self.reranker = reranker
         self.llm = ollama_client
-        self.hf_crawler = HuggingFaceCrawler()
+        self.hf_crawler = hf_crawler
 
     # 너무 일반적이어서 HF API 검색에 쓸 수 없는 단어들
     _GENERIC_KW = {
@@ -167,7 +175,7 @@ class RecommenderPipeline:
             return None
         return keyword
 
-    # ── 데이터 수집 헬퍼 (run / run_stream 공용) ──────────────────────────
+    # ── 데이터 수집 ────
 
     async def _gather_model_data(self, query: str, pricing: Dict):
         """검색 → 크롤링(필요시) → 리랭킹 수행. (reranked, table_data, refs) 반환"""
@@ -175,22 +183,27 @@ class RecommenderPipeline:
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
-        # 캐시 키를 원본 쿼리로 사용 
         if not documents or not _is_recently_crawled(query):
             keyword = await self._extract_keyword(query)  # 크롤링이 필요할 때만 LLM 호출
-            print(f"[*] 실시간 수집 시작 (키워드: {keyword or 'trending'})")
-            new_data = await self.hf_crawler.fetch_models(search_query=keyword, limit=10)
-            if new_data:
-                for m in new_data:
-                    price_info = pricing_crawler.get_price(pricing, m["name"])
-                    m["cost"] = price_info["price_display"]
-                    m["context_length"] = price_info["context_length"]
-                await data_processor.process_and_save(new_data, item_type="MODEL")
-                _mark_crawled(query)
-                requery = keyword if keyword else query
-                search_results = await self.store.query(requery, n_results=20, item_type="MODEL")
-                documents = search_results["documents"][0] if search_results["documents"] else []
-                metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
+            # 동일 키워드로 수렴할 때 중복 크롤링 방지
+            if documents and keyword and _is_recently_crawled(keyword):
+                _mark_crawled(query) 
+            else:
+                print(f"[*] 실시간 수집 시작 (키워드: {keyword or 'trending'})")
+                new_data = await self.hf_crawler.fetch_models(search_query=keyword, limit=10)
+                if new_data:
+                    for m in new_data:
+                        price_info = pricing_crawler.get_price(pricing, m["name"])
+                        m["cost"] = price_info["price_display"]
+                        m["context_length"] = price_info["context_length"]
+                    await data_processor.process_and_save(new_data, item_type="MODEL")
+                    _mark_crawled(query)
+                    if keyword:
+                        _mark_crawled(keyword)
+                    requery = keyword if keyword else query
+                    search_results = await self.store.query(requery, n_results=20, item_type="MODEL")
+                    documents = search_results["documents"][0] if search_results["documents"] else []
+                    metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
         if not documents:
             return [], [], []
@@ -239,11 +252,10 @@ class RecommenderPipeline:
                 "table_data": [],
             }
 
-        pricing = await _get_pricing()
-
         if category == "AGENT":
             _, table_data, refs = await self._gather_agent_data(query)
         else:
+            pricing = await _get_pricing()  # MODEL 경로에서만 가격 조회 필요
             _, table_data, refs = await self._gather_model_data(query, pricing)
 
         if not refs:
@@ -281,13 +293,12 @@ class RecommenderPipeline:
             yield {"type": "done", "category": "GENERAL"}
             return
 
-        pricing = await _get_pricing()
-
         yield {"type": "status", "step": 2, "message": "DB 검색 및 크롤링 중..."}
 
         if category == "AGENT":
             _, table_data, refs = await self._gather_agent_data(query)
         else:
+            pricing = await _get_pricing()  # MODEL 경로에서만 가격 조회 필요
             _, table_data, refs = await self._gather_model_data(query, pricing)
 
         if not refs:

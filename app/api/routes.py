@@ -60,7 +60,16 @@ async def chat(request: ChatRequest):
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     async def generate():
-        async for event in recommender_pipeline.run_stream(request.message):
-            yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        try:
+            async for event in recommender_pipeline.run_stream(request.message):
+                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            # 스트리밍 도중 예외 발생 시 연결을 끊지 않고
+            # 프론트가 처리하는 error → done 이벤트를 전송
+            print(f"[!] 스트리밍 서버 에러: {e}")
+            err = {"type": "error", "message": "서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."}
+            yield f"data: {json.dumps(err, ensure_ascii=False)}\n\n"
+            done = {"type": "done", "category": "ERROR"}
+            yield f"data: {json.dumps(done, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")

@@ -24,6 +24,11 @@ async def test_full_pipeline():
         assert result["category"] == expected, f"분류 오류: 실제={result['category']}, 기대={expected}"
         assert result["answer"], "answer 비어있음"
 
+        # MODEL/AGENT는 추천 결과가 반드시 존재
+        if expected != "GENERAL":
+            assert len(result["table_data"]) > 0, f"{expected} 결과 누락 — 검색/리랭킹 파이프라인 실패"
+            assert result["table_data"][0].get("name"), f"{expected} 항목명 누락"
+
         print(f"  카테고리: {result['category']}")
         print(f"  답변: {result['answer'][:80]}...")
         if result["table_data"]:

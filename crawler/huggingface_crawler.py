@@ -96,3 +96,6 @@ class HuggingFaceCrawler:
                 return []
 
         return [m for item in response.json() if (m := _parse_item(item))]
+
+
+hf_crawler = HuggingFaceCrawler()
