@@ -39,9 +39,9 @@
 
 1. 사용자 질문을 **키워드 분류 + LLM fallback(gemma3:4b)** 으로 분류 (MODEL / AGENT / GENERAL)
 2. 질문을 **임베딩(BGE-m3-ko)** 해 ChromaDB에서 유사 후보 20개 검색
-2-2. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API** 에서 실시간 수집 후 DB UPSERT (UPDATE & INSERT)
-3. **리랭킹(BGE-reranker-v2-m3)** 으로 쿼리 관련도를 비교해 상위 3~5개 선별
-4. **Ollama(gemma3:4b)** 가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
+3. 신규 키워드이거나 TTL(14일)이 만료된 경우 **HuggingFace / GitHub API** 에서 실시간 수집 후 DB UPSERT (UPDATE & INSERT)
+4. **리랭킹(BGE-reranker-v2-m3)** 으로 쿼리 관련도를 비교해 상위 3~5개 선별
+5. **Ollama(gemma3:4b)** 가 선별된 결과를 SSE 스트리밍을 통한 자연어 답변으로 제공
 
 외부 유료 API 없이 완전 로컬 실행이 가능하며, Docker와 로컬 환경을 모두 지원한다.
 

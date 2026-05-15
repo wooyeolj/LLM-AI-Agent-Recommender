@@ -16,10 +16,8 @@ def test_run():
     print(f"입력: {text}")
     print(f"차원: {len(vector)} | 앞부분: {vector[:3]}")
 
-    if len(vector) > 0:
-        print("임베딩 테스트 성공!")
-    else:
-        print("임베딩 테스트 실패")
+    assert len(vector) > 0, "임베딩 벡터 공백!"
+    print("임베딩 테스트 성공!")
 
 
 if __name__ == "__main__":

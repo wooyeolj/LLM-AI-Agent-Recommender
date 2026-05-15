@@ -27,10 +27,8 @@ def test_run():
         print(f"  문구: {r['text']}\n")
 
     top_text = results[0]["text"]
-    if "CodeLlama" in top_text or "GPT-4" in top_text:
-        print("리랭커 테스트 성공!")
-    else:
-        print("리랭킹 테스트 실패")
+    assert "CodeLlama" in top_text or "GPT-4" in top_text, "리랭킹 순위 오류!"
+    print("리랭커 테스트 성공!")
 
 
 if __name__ == "__main__":

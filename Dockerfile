@@ -15,5 +15,5 @@ COPY . .
 #로그 실시간 확인
 ENV PYTHONUNBUFFERED=1
 
-# 도커 없이 직접 실행 기본값
+# docker-compose 없이 docker run 으로 직접 실행 시 기본 명령어
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

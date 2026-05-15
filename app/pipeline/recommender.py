@@ -175,9 +175,9 @@ class RecommenderPipeline:
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
-        keyword = await self._extract_keyword(query)
-        cache_key = keyword or "__trending__"
-        if not documents or not _is_recently_crawled(cache_key):
+        # 캐시 키를 원본 쿼리로 사용 
+        if not documents or not _is_recently_crawled(query):
+            keyword = await self._extract_keyword(query)  # 크롤링이 필요할 때만 LLM 호출
             print(f"[*] 실시간 수집 시작 (키워드: {keyword or 'trending'})")
             new_data = await self.hf_crawler.fetch_models(search_query=keyword, limit=10)
             if new_data:
@@ -186,7 +186,7 @@ class RecommenderPipeline:
                     m["cost"] = price_info["price_display"]
                     m["context_length"] = price_info["context_length"]
                 await data_processor.process_and_save(new_data, item_type="MODEL")
-                _mark_crawled(cache_key)
+                _mark_crawled(query)
                 requery = keyword if keyword else query
                 search_results = await self.store.query(requery, n_results=20, item_type="MODEL")
                 documents = search_results["documents"][0] if search_results["documents"] else []

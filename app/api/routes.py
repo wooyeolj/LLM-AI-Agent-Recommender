@@ -25,10 +25,13 @@ router = APIRouter()
 async def chat(request: ChatRequest):
     try:
         result = await recommender_pipeline.run(request.message)
+        category = result.get("category", "GENERAL")
 
-        if not result.get("references") and not result.get("table_data"):
+        # 검색이 필요한 카테고리(MODEL/AGENT)인데 결과가 없을 때만 fallback 처리.
+        # GENERAL은 검색이 불필요한 정상 경로이므로 SUCCESS로 응답.
+        if category in ("MODEL", "AGENT") and not result.get("references") and not result.get("table_data"):
             return ChatResponse(
-                category=result.get("category", "GENERAL"),
+                category=category,
                 answer="관련 정보를 찾지 못해 기본 지식으로 답변합니다: " + result.get("answer", ""),
                 references=[],
                 table_data=[],
@@ -36,9 +39,9 @@ async def chat(request: ChatRequest):
             )
 
         return ChatResponse(
-            category=result["category"],
-            answer=result["answer"],
-            references=result["references"],
+            category=category,
+            answer=result.get("answer", ""),
+            references=result.get("references", []),
             table_data=result.get("table_data", []),
             status="SUCCESS",
         )

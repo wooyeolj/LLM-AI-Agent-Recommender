@@ -42,10 +42,8 @@ async def test_combined_search():
     for i, r in enumerate(reranked):
         print(f"  {i+1}. {r['metadata'].get('name')} (점수: {r['score']:.4f})")
 
-    if "Llama 3" in reranked[0]["metadata"].get("name", ""):
-        print("\n테스트 성공!")
-    else:
-        print("\n테스트 실패 (순위 예상과 다름)")
+    assert "Llama 3" in reranked[0]["metadata"].get("name", ""), "리랭킹 순위 오류!"
+    print("\n테스트 성공!")
 
 
 if __name__ == "__main__":

@@ -23,6 +23,8 @@ def test_chat_general():
     r = requests.post(f"{BASE_URL}/api/chat", json={"message": "안녕하세요"}, timeout=120)
     data = r.json()
     assert data["category"] == "GENERAL"
+    assert data["status"] == "SUCCESS", f"GENERAL이 검색 실패로 처리됨: status={data['status']}"
+    assert not data["answer"].startswith("관련 정보를 찾지 못해"), "GENERAL 답변에 잘못된 fallback 접두사가 붙음"
     print(f"  카테고리: {data['category']} | 답변: {data['answer'][:60]}...")
 
 

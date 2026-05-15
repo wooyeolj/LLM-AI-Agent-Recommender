@@ -15,16 +15,19 @@ async def test_huggingface():
 
     print("\n[1] 키워드 검색 (DeepSeek)")
     results = await crawler.fetch_models(search_query="DeepSeek", limit=3)
+    assert results, "DeepSeek 키워드 검색 결과 누락"
     for r in results:
         print(f"  {r['name']} | downloads={r['downloads']:,} | pipeline={r['pipeline_tag']}")
 
     print("\n[2] 파이프라인 태그 필터 (text-to-image)")
     results = await crawler.fetch_models(search_query="text-to-image", limit=3)
+    assert results, "text-to-image 파이프라인 태그 검색 결과 누락"
     for r in results:
         print(f"  {r['name']} | pipeline={r['pipeline_tag']}")
 
     print("\n[3] 상위 LLM 수집 (top 5)")
     results = await crawler.fetch_top_models(limit=5)
+    assert results, "상위 LLM 수집 결과 누락"
     for r in results:
         print(f"  {r['name']} | downloads={r['downloads']:,}")
 
@@ -44,6 +47,7 @@ async def test_github():
     finally:
         _mod.AGENT_REPOS = original_repos
 
+    assert results, "GitHub 에이전트 프레임워크 수집 결과 누락"
     for r in results:
         print(f"  {r['name']} | stars={r['github_stars']:,} | {r['use_case']}")
 
