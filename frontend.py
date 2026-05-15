@@ -16,7 +16,7 @@ with st.sidebar:
         st.rerun()
 
 st.title("AI 모델 & 에이전트 맞춤 추천")
-st.markdown("사용자의 환경에 가장 적합한 모델을 제안합니다.")
+st.markdown("수백 개의 AI 중, 최적의 AI를 찾아드립니다.")
 
 BACKEND_URL = settings.BACKEND_URL
 
@@ -28,17 +28,15 @@ def _render_table(category: str, data: list):   # 백엔드에서 받은 추천 
     if category == "MODEL":
         st.subheader("[추천] 모델 비교")
         rows = []
-        for item in data:
-            ctx = item.get("context_length", 0)
+        for i, item in enumerate(data, 1):
             rows.append({
+                "순위": f"{i}위",
                 "모델명": item.get("name", "-"),
                 "설명": (item.get("description", "") or "")[:120],
                 "비용": item.get("cost", "-"),
-                "컨텍스트": f"{ctx:,}" if ctx else "-",
                 "출시": item.get("created_at", "-"),
                 "다운로드/월": item.get("downloads", "-"),
                 "좋아요": item.get("likes", 0),
-                "연관성": item.get("relevance", "-"),
                 "링크": item.get("url", ""),
             })
         df = pd.DataFrame(rows)
@@ -52,14 +50,14 @@ def _render_table(category: str, data: list):   # 백엔드에서 받은 추천 
     elif category == "AGENT":
         st.subheader("[추천] 에이전트 프레임워크")
         rows = []
-        for item in data:
+        for i, item in enumerate(data, 1):
             rows.append({
+                "순위": f"{i}위",
                 "이름": item.get("name", "-"),
                 "사용 사례": item.get("use_case", "-"),
                 "지원 LLM": item.get("supported_llms", "-"),
                 "로컬 지원": "Y" if item.get("local_support") else "N",
                 "GitHub Stars": f"{item.get('github_stars', 0):,}",
-                "연관성": item.get("relevance", "-"),
                 "링크": item.get("url", ""),
             })
         df = pd.DataFrame(rows)
