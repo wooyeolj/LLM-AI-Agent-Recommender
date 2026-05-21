@@ -1,5 +1,7 @@
 # LLM & AI Agent 추천 시스템
 
+![Unit Tests](https://github.com/wooyeolj/LLM-AI-Agent-Recommender/actions/workflows/test.yml/badge.svg)
+
 2022년 ChatGPT 출시 이후 수백 개의 LLM과 에이전트 프레임워크가 출시되면서, 목적에 맞는 AI 도구를 선택하는 것이 하나의 과제가 되었다.
 이 프로젝트는 사용자의 자연어 질문을 기반으로 HuggingFace, OpenRouter, GitHub API를 이용해 실시간으로 데이터를 수집하고, RAG (검색 증강 생성) 기술로 최적의 LLM 모델 또는 AI 에이전트 프레임워크를 제공한다.
 
