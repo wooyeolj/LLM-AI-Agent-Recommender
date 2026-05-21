@@ -20,7 +20,6 @@ RUNS = 5
 
 
 def bucket(accepted: list[str]) -> str:
-    # 다중 정답은 별도 분리
     return accepted[0] if len(accepted) == 1 else "AMBIGUOUS"
 
 
@@ -35,7 +34,7 @@ async def evaluate():
     total_correct = 0
     total_runs = 0
     per_query_results = []
-    bucket_stats: dict[str, list[int]] = {}  # bucket → [correct, runs]
+    bucket_stats: dict[str, list[int]] = {} 
 
     for q in queries:
         qid           = q["id"]
@@ -102,7 +101,7 @@ async def evaluate():
         "note": (
             "test_queries.json 기반 분류기 평가. "
             "LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질 수 있다. "
-            "버킷 AMBIGUOUS는 expected_category가 다중인 쿼리 의미."
+            "버킷 AMBIGUOUS는 기대 분류가 다중인 쿼리."
         ),
         "summary": {
             "total_queries": len(per_query_results),

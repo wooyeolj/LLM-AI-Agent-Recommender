@@ -1,4 +1,4 @@
-# HuggingFace REST API 크롤러 — 모델 검색(실시간용)과 다운로드 상위 모델 수집(초기 DB용)
+# HuggingFace REST API 크롤러 - 초기 DB용
 import logging
 import httpx
 
@@ -52,14 +52,10 @@ class HuggingFaceCrawler:
         self.base_url = HF_API_BASE
 
     async def fetch_models(self, search_query: str = None, limit: int = 10) -> list[dict]:
-        """
-        실시간 검색용. 다음 규칙으로 검색
-        1. search_query가 pipeline tag → pipeline_tag 파라미터로 정확히 필터링
-        2. search_query가 모델명/키워드 → search 파라미터
-        3. search_query 없음 → text-generation 상위 모델
-        """
+
         params = {"sort": "downloads", "limit": limit, "full": "true"}
 
+        # pipeline_tag는 정확 필터, search는 키워드 매칭 — HF API 파라미터 구분
         if not search_query:
             params["pipeline_tag"] = "text-generation"
         elif search_query.lower() in HF_PIPELINE_TAGS:

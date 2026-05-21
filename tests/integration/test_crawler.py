@@ -1,5 +1,5 @@
 """
-크롤러 통합 테스트 — HuggingFace API 및 GitHub API 실제 연결 필요
+크롤러 통합 테스트 — API 연결 필요
 실행: pytest tests/integration/test_crawler.py -m integration -v
 """
 import sys

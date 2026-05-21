@@ -21,7 +21,7 @@ def github_headers() -> dict:
             logger.warning("GITHUB_TOKEN 오류! 비인증으로 진행합니다.")
     return headers
 
-# 추천 대상 AI 에이전트 프레임워크 목록 (org/repo 형식)
+# 미리 선정한 AI 에이전트 프레임워크 목록 15개
 AGENT_REPOS = [
     ("crewAIInc/crewAI",         "멀티에이전트 협업, 역할 기반 분업"),
     ("langchain-ai/langgraph",   "상태 머신 기반 에이전트 워크플로우"),

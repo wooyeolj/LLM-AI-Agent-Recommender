@@ -2,7 +2,6 @@
 import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# 프로젝트 루트 경로 설정
 BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -31,8 +30,6 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-
-    # 실제 API 주소 반환 > ollama_client.py
     @property
     def ollama_chat_url(self) -> str:
         return f"{self.OLLAMA_URL}/api/chat"

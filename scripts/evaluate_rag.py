@@ -1,7 +1,7 @@
 """
-RAG 품질 평가 스크립트 — RAG Triad + CrossEncoder 검색 품질 측정
+RAG 품질 평가 스크립트 — RAG Triad + CrossEncoder
 
-RAG Triad (LLM-as-judge):
+RAG Triad (LLM-as-judge) 답변 품질
   Context Relevance  — 검색된 문서와 쿼리의 관련도 측정          (0~1)
   Groundedness       — 생성된 답변이 소스 문서에 근거하는지 측정   (0~1)
   Answer Relevance   — 최종 답변과 질문 의도 와의 관련성 측정     (0~1)
@@ -27,7 +27,7 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 평가 중 출력 가독성 확보를 위한 불필요 로그 억제
+# 불필요 로그 억제
 logging.basicConfig(level=logging.WARNING)
 
 from app.core.config import settings
@@ -82,9 +82,6 @@ def truncate(text: str) -> str:
 
 def fmt(val: float | None) -> str:
     return f"{val:.3f}" if val is not None else "N/A"
-
-
-# judge 호출
 
 async def judge_context_relevance(query: str, context: str) -> float | None:
     user = f"질문: {query}\n\n검색된 문서:\n{truncate(context)}"
@@ -164,8 +161,6 @@ async def evaluate_one(query_text: str, category: ItemType, pricing: dict) -> di
     return result
 
 
-# 출력
-
 async def evaluate():
     with open(QUERIES_PATH, encoding="utf-8") as f:
         suite = json.load(f)
@@ -193,7 +188,6 @@ async def evaluate():
         else:
             print(f"Q{qid:02d} [{str(category):<7}] {match_mark}  RAG={fmt(res['rag_score'])}")
 
-    # 종합 결과
 
     def avg(key: str) -> float | None:
         vals = [r[key] for r in all_results if r.get(key) is not None]

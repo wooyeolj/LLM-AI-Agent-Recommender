@@ -1,4 +1,4 @@
-# 크롤링 데이터를 ChromaDB 저장용으로 전처리 — 텍스트 포맷 구성, 메타데이터 정규화, upsert 실행
+# 크롤링 데이터를 ChromaDB 저장용으로 전처리 
 import logging
 from datetime import datetime
 from app.services.vector_store import vector_store

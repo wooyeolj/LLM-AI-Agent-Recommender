@@ -24,7 +24,7 @@ TTL_DAYS = settings.CACHE_TTL_DAYS
 CRAWL_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "crawl_cache.json")
 PRICING_CACHE_FILE = os.path.join(settings.BASE_DIR, "data", "pricing_cache.json")
 
-# 리랭커 점수 임계값 - 쿼리와 관련 없는 문서(점수가 임계값 미만)는 차단해 LLM 환각 방지.
+# 리랭커 점수 임계값 - 점수 미만은 차단해 LLM 환각 방지.
 RELEVANCE_THRESHOLD = -1.0
 
 pricing_lock = asyncio.Lock()
@@ -49,7 +49,6 @@ def save_crawl_cache():
     os.replace(tmp, CRAWL_CACHE_FILE)
 
 
-# 앱 시작 시 파일에서 캐시 복원 — 재시작해도 TTL 유지
 crawl_cache: dict[str, datetime] = load_crawl_cache()
 
 
@@ -112,11 +111,9 @@ def normalize_confidence(scores: list[float]) -> list[str]:
     if not scores:
         return []
     if len(scores) == 1:
-        # 비교 대상이 없는 단일 결과
         return ["단일 결과"]
     min_s, max_s = min(scores), max(scores)
-    if max_s == min_s:
-        # 모든 점수가 동일 — 동일 관련도
+    if max_s == min_s: # 모든 점수가 동일
         return ["동일"] * len(scores)
     return [f"{(s - min_s) / (max_s - min_s) * 100:.1f}%" for s in scores]
 
@@ -129,8 +126,8 @@ def fmt_downloads(n: int) -> str:
     return str(n)
 
 
-def safe_int(value) -> int:
-    # int() 변환 실패 시 0 반환 — 타입 불일치 방어
+def safe_int(value) -> int: 
+    # 타입 불일치 방어
     try:
         return int(value or 0)
     except (ValueError, TypeError):
@@ -181,7 +178,7 @@ class RecommenderPipeline:
         self.llm = ollama_client
         self.hf_crawler = hf_crawler
 
-    # 너무 일반적이어서 HF API 검색에 쓸 수 없는 단어들
+    # HF API 예외 검색어
     _GENERIC_KW = {
         "ai", "llm", "model", "모델", "인공지능", "언어모델", "추천",
         "최신", "좋은", "best", "good", "top", "latest",
@@ -206,7 +203,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
 
         keyword = response.strip().split("\n")[0].replace('"', "").replace("'", "").strip()
 
-        # LLM 출력 정제 — 경로 트래버설 및 특수문자 제거, 최대 50자
+        # LLM 출력 정제
         keyword = re.sub(r"[^a-zA-Z0-9\-_ ]", "", keyword)[:50].strip()
 
         if not keyword or len(keyword) < 2 or keyword.lower() in self._GENERIC_KW:
@@ -218,14 +215,12 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
     async def _gather_model_data(
         self, query: str, pricing: dict
     ) -> tuple[list, list[dict], list[str]]:
-        # 검색 → 크롤링(필요시) → 리랭킹 수행
         search_results = await self.store.query(query, n_results=20, item_type=ItemType.MODEL)
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
         if not documents or not is_recently_crawled(query):
-            keyword = await self._extract_keyword(query)  # 크롤링이 필요할 때만 LLM 호출
-            # 동일 키워드 중복 크롤링 방지
+            keyword = await self._extract_keyword(query) 
             if documents and keyword and is_recently_crawled(keyword):
                 await mark_crawled(query)
             else:
@@ -259,7 +254,6 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
     async def _gather_agent_data(
         self, query: str
     ) -> tuple[list, list[dict], list[str]]:
-        # 에이전트 검색 → 크롤링(필요시) → 리랭킹 수행
         search_results = await self.store.query(query, n_results=20, item_type=ItemType.AGENT)
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
@@ -287,8 +281,6 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         refs = [r["text"] for r in reranked]
         return reranked, table_data, refs
 
-    # 단일 응답
-
     async def run(self, query: str) -> dict:
         category = await self.classifier.classify(query)
 
@@ -303,7 +295,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         if category == ItemType.AGENT:
             _, table_data, refs = await self._gather_agent_data(query)
         else:
-            pricing = await get_pricing()  # MODEL 경로에서만 가격 조회 필요
+            pricing = await get_pricing()  # MODEL 가격 조회 
             _, table_data, refs = await self._gather_model_data(query, pricing)
 
         if not refs:
@@ -323,8 +315,6 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
             "table_data": table_data,
         }
 
-    # 스트리밍 응답
-
     async def run_stream(self, query: str) -> AsyncGenerator[dict, None]:
         # 다음 순서대로 추출(yield)  type: "status" | "table" | "chunk" | "done" | "error"
         yield {"type": "status", "step": 1, "message": "질문 의도 분류 중..."}
@@ -342,7 +332,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         if category == ItemType.AGENT:
             _, table_data, refs = await self._gather_agent_data(query)
         else:
-            pricing = await get_pricing()  # MODEL 경로에서만 가격 조회 필요
+            pricing = await get_pricing()  # MODEL 가격 조회
             _, table_data, refs = await self._gather_model_data(query, pricing)
 
         if not refs:

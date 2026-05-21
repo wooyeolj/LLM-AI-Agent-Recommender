@@ -1,4 +1,4 @@
-# ChromaDB 인터페이스 — llm_items / agent_items 컬렉션 관리, cosine 유사도 검색
+# ChromaDB  llm_items / agent_items DB 관리
 import asyncio
 import logging
 import chromadb

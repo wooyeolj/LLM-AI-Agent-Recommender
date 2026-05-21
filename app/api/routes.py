@@ -1,4 +1,4 @@
-# /api/chat (단일 응답)와 /api/chat/stream (SSE 스트리밍) 엔드포인트 정의
+# /api/chat , /api/chat/stream 엔드포인트
 import json
 import logging
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -41,8 +41,7 @@ async def chat(
         result = await pipeline.run(body.message)
         category = result.get("category", "GENERAL")
 
-        # 검색이 필요한 카테고리(MODEL/AGENT)인데 결과가 없을 때만 fallback 처리.
-        # GENERAL은 SUCCESS로 응답.
+        # 결과가 없을 때 fallback 처리, GENERAL은 SUCCESS로
         if category in ("MODEL", "AGENT") and not result.get("references") and not result.get("table_data"):
             return ChatResponse(
                 category=str(category),

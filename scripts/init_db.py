@@ -1,5 +1,5 @@
 """
-초기 DB 구축 스크립트 (최초 1회 실행)
+초기 DB 구축 (최초 1회 실행)
 
 수집 항목:
   - HuggingFace API  : 오픈소스 모델 이름, 설명, 다운로드 수, 좋아요, 태그, 출시일
@@ -31,7 +31,7 @@ async def main():
     logger.info("[1/4] OpenRouter 가격 데이터 로드 중...")
     pricing_data = await pricing_crawler.load_openrouter_prices()
 
-    # 2. HuggingFace 오픈소스 모델 수집 + 가격 JOIN
+    # 2. HuggingFace 오픈소스 모델 수집
     logger.info("[2/4] HuggingFace 상위 모델 수집 중...")
     hf = HuggingFaceCrawler()
     hf_models = await hf.fetch_top_models(limit=50)

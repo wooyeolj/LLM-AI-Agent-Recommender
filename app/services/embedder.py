@@ -1,4 +1,4 @@
-# BGE-m3-ko 임베딩 모델 래퍼 — 텍스트를 벡터로 변환, FIFO 캐시(512개) 포함
+# BGE-m3-ko 임베딩 모델
 import logging
 import threading
 from sentence_transformers import SentenceTransformer

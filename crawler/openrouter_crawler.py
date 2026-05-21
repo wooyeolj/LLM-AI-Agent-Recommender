@@ -1,4 +1,4 @@
-# OpenRouter API 크롤러 — 모델 카탈로그 및 가격(per 1M tokens) 수집
+# OpenRouter API 크롤러 — 모델 카탈로그 및 가격 수집
 import logging
 from datetime import datetime, timezone
 import httpx
@@ -55,7 +55,6 @@ class PricingCrawler:
         return result
 
     async def fetch_models(self) -> list[dict]:
-        # OpenRouter 모델 카탈로그
         logger.info("OpenRouter 모델 카탈로그 로딩 중...")
 
         async with httpx.AsyncClient(follow_redirects=True, timeout=20.0) as client:
@@ -106,7 +105,6 @@ class PricingCrawler:
 
     def get_price(self, pricing_data: dict[str, dict], model_id: str) -> dict:
         key = normalize(model_id)
-        # org/model-name 형식과 model-name 형식 시도
         short = key.split("/")[-1] if "/" in key else key
 
         info = pricing_data.get(key) or pricing_data.get(short)

@@ -1,4 +1,4 @@
-# Ollama HTTP 클라이언트 — 단일 응답(generate_response)과 SSE 스트리밍(stream_response) 제공
+# Ollama HTTP 클라이언트 
 import json
 import logging
 import httpx

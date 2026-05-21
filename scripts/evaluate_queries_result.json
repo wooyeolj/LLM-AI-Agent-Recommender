@@ -2,7 +2,7 @@
   "evaluated_at": "2026-05-20T07:25:38.301963",
   "fallback_model": "gemma3:4b",
   "runs_per_query": 5,
-  "note": "test_queries.json 기반 분류기 평가. LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질 수 있다. 버킷 AMBIGUOUS는 expected_category가 다중인 쿼리 의미.",
+  "note": "test_queries.json 기반 분류기 평가. LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질 수 있다. 버킷 AMBIGUOUS는 기대 분류가 다중인 쿼리.",
   "summary": {
     "total_queries": 10,
     "total_runs": 50,

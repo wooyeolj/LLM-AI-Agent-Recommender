@@ -1,5 +1,5 @@
 """
-FastAPI 엔드포인트 통합 테스트 — 백엔드 서버 실행 필요 (uvicorn app.main:app)
+FastAPI 엔드포인트 통합 테스트 — 백엔드 서버 실행 필요
 실행: pytest tests/integration/test_api.py -m integration -v
 """
 import sys
