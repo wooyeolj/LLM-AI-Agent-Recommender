@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 HF_API_BASE = "https://huggingface.co/api/models"
 HEADERS = {"Accept": "application/json"}
 
-# HF pipeline_tag 값 목록 — 이 키워드는 search 대신 pipeline_tag 파라미터로 전달
+# HF pipeline_tag 태그 - search 보다 품질 높은 검색
 HF_PIPELINE_TAGS = {
     "text-generation", "text-to-image", "image-to-text", "image-to-image",
     "text-to-speech", "text-to-audio", "automatic-speech-recognition",
@@ -51,11 +51,11 @@ class HuggingFaceCrawler:
     def __init__(self):
         self.base_url = HF_API_BASE
 
+    #실시간 검색 용
     async def fetch_models(self, search_query: str = None, limit: int = 10) -> list[dict]:
 
         params = {"sort": "downloads", "limit": limit, "full": "true"}
 
-        # pipeline_tag는 정확 필터, search는 키워드 매칭 — HF API 파라미터 구분
         if not search_query:
             params["pipeline_tag"] = "text-generation"
         elif search_query.lower() in HF_PIPELINE_TAGS:
@@ -78,6 +78,7 @@ class HuggingFaceCrawler:
 
         return [m for item in response.json() if (m := parse_item(item))]
 
+    #초기화 용
     async def fetch_top_models(self, limit: int = 50) -> list[dict]:
         params = {
             "sort": "downloads",

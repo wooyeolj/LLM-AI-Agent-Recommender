@@ -41,7 +41,7 @@ AGENT_REPOS = [
 ]
 
 
-async def get_with_retry(
+async def retry(
     client: httpx.AsyncClient, url: str, retries: int = 2
 ) -> httpx.Response:
     for attempt in range(retries + 1):
@@ -65,7 +65,7 @@ class GitHubCrawler:
         async with httpx.AsyncClient(headers=github_headers(), timeout=15.0) as client:
             for repo_path, use_case in AGENT_REPOS:
                 try:
-                    r = await get_with_retry(client, f"{GITHUB_API}/{repo_path}")
+                    r = await retry(client, f"{GITHUB_API}/{repo_path}")
                     if r.status_code != 200:
                         logger.warning("GitHub API 실패 (%s): %d", repo_path, r.status_code)
                         results.append(self._fallback(repo_path, use_case))

@@ -26,6 +26,7 @@ class VectorStore:
     def _get_collection(self, item_type: str):
         return self.agent_collection if item_type == "AGENT" else self.model_collection
 
+    #쓰기
     async def upsert_documents(
         self,
         ids: list[str],
@@ -47,6 +48,7 @@ class VectorStore:
             logger.error("Error upserting documents: %s", e)
             raise
 
+    #읽기
     async def query(
         self,
         query_text: str,
@@ -56,7 +58,6 @@ class VectorStore:
         collection = self._get_collection(item_type)
         query_embedding = await asyncio.to_thread(embedder.get_embedding, query_text)
 
-        # 컬렉션이 비어있으면 빈 결과 반환
         if collection.count() == 0:
             return {"documents": [[]], "metadatas": [[]], "distances": [[]]}
 

@@ -20,6 +20,7 @@ class Reranker:
         pairs = [[query, doc] for doc in documents]
         scores = self.model.predict(pairs)
 
+        #scores는 list임을 보장
         if isinstance(scores, float):
             scores = [scores]
 

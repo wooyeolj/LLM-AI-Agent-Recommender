@@ -2,9 +2,9 @@
 # pip install -r requirements.txt
 
 # 웹 프레임워크 및 서버
-fastapi==0.136.0          # API 서버 프레임워크
-uvicorn[standard]==0.44.0 # FastAPI 실행 ASGI 서버
-pydantic==2.13.3          # 요청/응답 데이터 검증
+fastapi==0.136.0          # 서버 프레임워크
+uvicorn[standard]==0.44.0 # FastAPI 실행 서버
+pydantic==2.13.3          # 데이터 검증
 pydantic-settings==2.14.0 # .env 파일 > Python 설정 객체 변환
 streamlit==1.56.0         # UI 프레임워크
 
@@ -18,7 +18,7 @@ sentence-transformers==5.4.1  # 임베딩(BGE-M3-ko) + 리랭커(CrossEncoder)
 chromadb==1.5.8               # 벡터 DB (임베딩 저장 및 유사도 검색)
 
 # 데이터 처리
-pandas==2.3.3             # 추천 결과 테이블 처리
+pandas==2.3.3             # 결과 표 출력 
 
 # PyTorch CPU 전용
 torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu

@@ -26,6 +26,7 @@ def format_price(prompt_price: str, completion_price: str) -> str:
 
 class PricingCrawler:
 
+    #가격 TTL 만료 시 가격만 크롤링 후 갱신 
     async def load_openrouter_prices(self) -> dict[str, dict]:
         logger.info("OpenRouter 가격 데이터 로딩 중...")
 
@@ -54,6 +55,7 @@ class PricingCrawler:
         logger.info("OpenRouter 가격 로드 완료: %d개 모델", len(result))
         return result
 
+    #초기화 용
     async def fetch_models(self) -> list[dict]:
         logger.info("OpenRouter 모델 카탈로그 로딩 중...")
 
@@ -80,6 +82,8 @@ class PricingCrawler:
             if not description:
                 description = f"OpenRouter 모델: {item.get('name') or model_id}"
 
+
+            #유닉스 시간 > UTC 시간
             created_epoch = item.get("created")
             if isinstance(created_epoch, (int, float)) and created_epoch > 0:
                 created_iso = datetime.fromtimestamp(created_epoch, tz=timezone.utc).isoformat()
@@ -103,6 +107,7 @@ class PricingCrawler:
         logger.info("OpenRouter 모델 카탈로그 로드 완료: %d개", len(models))
         return models
 
+    #HuggingFace 모델용 가격 수집
     def get_price(self, pricing_data: dict[str, dict], model_id: str) -> dict:
         key = normalize(model_id)
         short = key.split("/")[-1] if "/" in key else key

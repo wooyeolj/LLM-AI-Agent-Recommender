@@ -150,7 +150,7 @@ SSE 스트리밍 → Streamlit UI (실시간 출력)
 | **카테고리 분류** MODEL / AGENT / GENERAL | 분류 없음 또는 2분류 | MODEL/AGENT는 각각 다른 DB로 저장 및 검색이 이뤄지고, GENERAL은 LLM으로 바로 처리해 불필요한 검색을 방지 | `app/services/query_classifier.py` |
 | **분류 구조** 키워드 1차 → LLM fallback | 모든 쿼리를 LLM으로 분류 | "LLM", "에이전트" 등 명확한 키워드가 있는 쿼리는 수ms 내 분류 가능. LLM 호출(0.5~5초)은 키워드 분류가 불가능한 경우에만 발생해 평균 응답 시간 단축 | `app/services/query_classifier.py` |
 | **SSE 스트리밍** | 일반 HTTP 또는 WebSocket | 본 서비스는 서버→클라이언트 단방향 스트리밍만 필요. SSE는 HTTP 표준으로 FastAPI `StreamingResponse`로 간단히 구현되어 사용자의 체감 대기 시간 단축 | `app/api/routes.py` |
-| **싱글톤 패턴** (임베딩 · 리랭커) | 요청마다 모델 로드 | BGE-m3-ko, CrossEncoder 각각 초기 로드에 10~30초 소요. 앱 시작 시 한 번만 로드하는 싱글톤 구조로 추가 지연 방지 | `app/services/embedder.py`, `app/services/reranker.py` |
+| **싱글톤 패턴** (임베딩 · 리랭커) | 요청마다 모델 로드 | BGE-m3-ko, CrossEncoder 각각 초기 로드에 10~30초 소요. 첫 요청 시 한 번만 로드하는 싱글톤 구조로 추가 지연 방지 | `app/services/embedder.py`, `app/services/reranker.py` |
 | **한국어 태그 보강** (`PIPELINE_KO`) | 영어 원문 그대로 저장 | "그림 그려줘"와 "text-to-image" 간 임베딩 거리가 큼. 한국어 동의어("이미지생성 그림생성")를 미리 매핑해 한국어 쿼리와 태그 간 매칭 정확도 향상 | `crawler/data_processor.py` |
 | **Ollama 로컬 LLM** | LLM API | API 키 없이 누구나 실행 가능해 접근성 확보 및 모델 교체 유연성 제공 | `app/services/ollama_client.py` |
 | **프롬프트 인젝션 부분 방어** system/user 역할 분리 + SYSTEM_PROMPT 가드 | 지시문과 사용자 입력 혼합 | 지시문은 system, 사용자 입력은 user로 격리해 입력값이 지시문을 덮어쓰는 것을 방지하고, 지시문에 프롬프트 인젝션 거부 규칙을 추가. | `app/services/ollama_client.py` |
@@ -506,3 +506,4 @@ LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질
 | 에이전트 프레임워크 자동 탐색 | 15개 수동 선정 | `agent` 키워드 검색 시 AI와 무관한 repo가 다수 포함되어 검증된 15개의 프레임워크 수동 선정. 향후 `topic:llm-agent` 필터 + star 기준으로 자동 탐색 예정 |
 | 분류 키워드 우회 방어 | 키워드 + LLM fallback 분류 구조 | "LLM이 뭐야"처럼 의도 외 키워드 히트 발생. 임베딩 거리와 결합한 하이브리드 분류 검토 |
 | 대화 히스토리 | 각 질문이 독립적으로 처리됨 | 이전 대화 맥락이 다음 질문에 반영되지 않음. 대화 메모리 저장 검토 |
+| HF-OpenRouter 모델 퍼지 매칭 | 소문자 정규화 + 단축명 매칭 | 두 API 간 모델 매칭 실패 시 유료 모델이 무료로 오분류. 정규화 강화 또는 `rapidfuzz` 적용 예정 |

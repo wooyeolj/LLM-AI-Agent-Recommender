@@ -6,6 +6,8 @@ BASE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 
 class Settings(BaseSettings):
+
+    # 환경설정 기본값
     BASE_DIR: str = BASE
 
     OLLAMA_MODEL: str = "gemma3:4b"
@@ -24,7 +26,7 @@ class Settings(BaseSettings):
     CACHE_TTL_DAYS: int = 14
     GITHUB_TOKEN: str = ""
 
-    # .env를 상속 , 없다면 기본값
+    # .env를 읽고 기본값을 덮어씀
     model_config = SettingsConfigDict(
         env_file=os.path.join(BASE, ".env"),
         env_file_encoding="utf-8",
