@@ -43,13 +43,13 @@ async def evaluate():
         accepted      = expected_cat if isinstance(expected_cat, list) else [expected_cat]
 
         correct       = 0
-        elapsed_list  = []
+        elapsed_list  = [] #응답 시간
         predictions   = []
 
         for _ in range(RUNS):
             start      = time.time()
             actual_cat = str(await query_classifier.classify(query_text))
-            elapsed_list.append(round(time.time() - start, 3))
+            elapsed_list.append(round(time.time() - start, 3)) 
             predictions.append(actual_cat)
             if actual_cat in accepted:
                 correct += 1

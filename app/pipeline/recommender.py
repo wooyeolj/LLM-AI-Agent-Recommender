@@ -73,7 +73,7 @@ def load_pricing_cache() -> tuple[dict | None, datetime | None]:
         saved_at = datetime.fromisoformat(saved["saved_at"])
         if datetime.now() - saved_at > timedelta(days=TTL_DAYS):
             return None, None 
-        return saved["data"], saved_at
+        return saved["data"], saved_at #data 키를 읽음
     except Exception:
         return None, None
 
@@ -211,14 +211,15 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         return keyword
 
     # 데이터 수집
-
     async def _gather_model_data(
         self, query: str, pricing: dict
     ) -> tuple[list, list[dict], list[str]]:
+        # 1. DB에서 top-20 검색
         search_results = await self.store.query(query, n_results=20, item_type=ItemType.MODEL)
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
+        # 2. TTL 체크
         if not documents or not is_recently_crawled(query):
             keyword = await self._extract_keyword(query) 
             if documents and keyword and is_recently_crawled(keyword):
@@ -241,6 +242,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         if not documents:
             return [], [], []
 
+        # 3. 리랭킹
         reranked = await asyncio.to_thread(self.reranker.rerank, query, documents, metadatas, 5)
         reranked = [r for r in reranked if r["score"] >= RELEVANCE_THRESHOLD]
         if not reranked:
@@ -248,7 +250,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
 
         confidences = normalize_confidence([r["score"] for r in reranked])
         table_data = build_model_table(reranked, confidences)
-        refs = [r["text"] for r in reranked]
+        refs = [r["text"] for r in reranked] # llm은 딕셔너리보다 자연어 텍스트로 제공하는 것이 good
         return reranked, table_data, refs
 
     async def _gather_agent_data(
@@ -295,7 +297,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         if category == ItemType.AGENT:
             _, table_data, refs = await self._gather_agent_data(query)
         else:
-            pricing = await get_pricing()  # MODEL 가격 조회 
+            pricing = await get_pricing()  # MODEL 
             _, table_data, refs = await self._gather_model_data(query, pricing)
 
         if not refs:

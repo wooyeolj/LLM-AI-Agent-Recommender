@@ -74,7 +74,7 @@ async def chat_stream(
     body: ChatRequest,
     pipeline: RecommenderPipeline = Depends(get_pipeline),
 ):
-    async def generate():
+    async def generate(): #이벤트를 SSE 형식으로 변환
         try:
             async for event in pipeline.run_stream(body.message):
                 yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"

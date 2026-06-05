@@ -64,11 +64,11 @@ SYS_ANSWER_RELEVANCE = """
 숫자 하나만 출력하십시오. 다른 설명은 절대 하지 않습니다.
 """
 
-
+# logit 숫자를 0~1로 변환
 def sigmoid(x: float) -> float:
     return round(1.0 / (1.0 + math.exp(-x)), 4)
 
-
+# LLM 응답 파싱
 def parse_score(text: str) -> float | None:
     match = re.search(r'\b(0(?:\.\d+)?|1(?:\.0*)?)\b', text.strip())
     if match:

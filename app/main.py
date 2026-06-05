@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
+#yield 위아래로 시작/종료 구분
 async def lifespan(app: FastAPI):
     if not settings.GITHUB_TOKEN:
         logger.warning(
@@ -40,7 +41,8 @@ async def lifespan(app: FastAPI):
     await asyncio.to_thread(vector_store._load) # ChromaDB
     logger.info("ML 모델 로딩 완료")
 
-    app.state.pipeline = recommender_pipeline
+    #app.state : FastAPI 가 제공하는 빈 저장 공간
+    app.state.pipeline = recommender_pipeline 
 
     logger.info("모델 및 클라이언트 준비 완료")
     yield
@@ -56,7 +58,7 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler) #분당 10회 요청 초과 시 "요청이 너무 많습니다"로 명확히 표현
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -66,6 +68,7 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 
+#docker-compose 헬스체크
 @app.get("/")
 async def root():
     return {
@@ -73,6 +76,7 @@ async def root():
         "docs": "/docs"
     }
 
+#python app/main.py로 직접 실행할 때만 동작 (도커 실행 시 X)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host=settings.BACKEND_HOST, port=settings.BACKEND_PORT, reload=True)

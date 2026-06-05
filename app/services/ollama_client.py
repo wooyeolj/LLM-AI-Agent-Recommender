@@ -42,7 +42,9 @@ class OllamaClient:
     async def aclose(self):
         await self._client.aclose()
 
+    #system 지시 없이 호출
     async def generate_raw(self, prompt: str) -> str:
+        #ollama chat api 형식
         payload = {
             "model": settings.OLLAMA_MODEL,
             "messages": [{"role": "user", "content": prompt}],
@@ -57,6 +59,7 @@ class OllamaClient:
             )
         return response.json().get("message", {}).get("content", "")
 
+    # system 지시에 따라 user 처리
     async def judge(self, system_prompt: str, user_content: str) -> str:
         payload = {
             "model": settings.OLLAMA_MODEL,
@@ -75,6 +78,7 @@ class OllamaClient:
             )
         return response.json().get("message", {}).get("content", "")
 
+    # CLASSIFY_SYSTEM_PROMPT에 따라 query 처리 - 분류 전용
     async def classify_query(self, query: str) -> str:
         payload = {
             "model": settings.OLLAMA_MODEL,
@@ -93,6 +97,7 @@ class OllamaClient:
             )
         return response.json().get("message", {}).get("content", "")
 
+    # 최종 답변 생성 - 테스트 // context는 리랭킹 결과 리스트
     async def generate_response(self, query: str, context: str) -> str:
         payload = {
             "model": settings.OLLAMA_MODEL,
@@ -111,6 +116,7 @@ class OllamaClient:
             )
         return response.json().get("message", {}).get("content", "답변 생성 실패")
 
+    # 실제 최종 답변 생성 - SSE 스트리밍
     async def stream_response(
         self, query: str, context: str
     ) -> AsyncGenerator[str, None]:
@@ -122,8 +128,7 @@ class OllamaClient:
             ],
             "stream": True,
         }
-        async with self._client.stream(
-            "POST", settings.ollama_chat_url, json=payload
+        async with self._client.stream("POST", settings.ollama_chat_url, json=payload
         ) as response:
             response.raise_for_status()
             async for line in response.aiter_lines():
