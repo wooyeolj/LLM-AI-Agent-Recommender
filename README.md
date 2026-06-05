@@ -409,7 +409,6 @@ python3 scripts/evaluate_queries.py
 | 내 일정 관리를 도와줄 시스템이 필요해 | AGENT | LLM fallback |
 | 파이썬이랑 자바 중 어느 것이 취업에 유리할까? | GENERAL | LLM fallback |
 
-<img width="100%" alt="평가편집" src="https://github.com/user-attachments/assets/84fea771-c214-49c0-86f0-f6ce44bf6370" />
 
 ### 요약
 
