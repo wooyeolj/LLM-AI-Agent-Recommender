@@ -242,7 +242,9 @@ my-llm-project/
 
 ---
 
-## 배포 설계 — 로컬 · Docker 동시 지원
+## 배포 설계
+
+로컬 · Docker 동시 지원
 
 Ollama(LLM)는 **호스트**에서 실행되고, 백엔드(FastAPI)와 UI(Streamlit)는 **로컬 또는 Docker** 중 선택해 실행할 수 있다.
 
