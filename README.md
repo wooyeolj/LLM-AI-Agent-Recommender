@@ -410,7 +410,7 @@ python3 scripts/evaluate_queries.py
 | 파이썬이랑 자바 중 어느 것이 취업에 유리할까? | GENERAL | LLM fallback |
 
 
-### 요약
+### 측정 결과
 
 | 카테고리 | 정확도 | 비고 |
 |---------|--------|------|
