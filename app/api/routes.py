@@ -10,6 +10,8 @@ from app.pipeline.recommender import RecommenderPipeline
 
 
 def get_pipeline(request: Request) -> RecommenderPipeline:
+    if not getattr(request.app.state, "ready", False):
+        raise HTTPException(status_code=503, detail="모델 로딩 중입니다. 잠시 후 다시 시도해주세요.")
     return request.app.state.pipeline
 
 logger = logging.getLogger(__name__)

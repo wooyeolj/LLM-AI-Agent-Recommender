@@ -20,11 +20,11 @@ services:
       - OLLAMA_URL=http://host.docker.internal:11434
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # compose up 시 실행 (--reload 추가)
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
-      interval: 30s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
       timeout: 10s
-      retries: 3
-      start_period: 60s 
+      retries: 20
+      start_period: 10s
 
   frontend:
     build: .
