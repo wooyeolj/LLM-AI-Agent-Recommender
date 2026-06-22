@@ -87,6 +87,7 @@ class OllamaClient:
                 {"role": "user", "content": query},
             ],
             "stream": False,
+            "options": {"temperature": 0},
         }
         response = await self._client.post(settings.ollama_chat_url, json=payload)
         if response.status_code != 200:
