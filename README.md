@@ -531,7 +531,7 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 
 | 항목 | 내용 |
 |------|------|
-| EC2 인스턴스 | Ubuntu 24.04, t2.micro 생성 및 관리 |
+| EC2 인스턴스 | Ubuntu 26.04, t3.micro 생성 및 관리 |
 | 보안 그룹 | 인바운드 규칙 설정 (SSH 22, HTTP 80, FastAPI 8000) |
 | 키 페어 | .pem 파일 생성 및 SSH 접속 |
 | Docker | EC2 서버에 Docker 설치 및 컨테이너 배포 |
