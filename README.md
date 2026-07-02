@@ -513,7 +513,9 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 | 학습 환경 | Google Colab T4 GPU (15GB VRAM), 약 15분 |
 | Train Loss | 5.5207 → 1.3070 (감소율 **76.3%**) |
 
-![Loss 그래프](https://huggingface.co/wooyeolj/gemma-3-4b-it-ai-tool-recommender/resolve/main/training_loss.png)
+<img width="2083" height="740" alt="training_loss" src="https://github.com/user-attachments/assets/a9156002-2c3a-49e6-bc66-b4fa0297894c" />
+
+
 
 파인튜닝 후 베이스 모델 대비 구체적인 도구명과 선택 근거를 함께 제시하는 방향으로 응답 품질이 개선됐다.
 현재 프로젝트는 실시간 크롤링 기반 RAG 구조라 파인튜닝 모델 직접 연결 시 최신 정보 반영이 어려워 적용 방식 검토 중
