@@ -26,6 +26,7 @@
 - [RAG 품질 평가](#rag-품질-평가)
 - [기술적 도전과 해결](#기술적-도전과-해결)
 - [파인튜닝 실험](#파인튜닝-실험)
+- [AWS 인프라 구축 및 배포](#AWS-인프라-구축-및-배포)
 - [향후 개선 방향](#향후-개선-방향)
 
 ---
@@ -515,12 +516,42 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 
 <img width="2083" height="740" alt="training_loss" src="https://github.com/user-attachments/assets/a9156002-2c3a-49e6-bc66-b4fa0297894c" />
 
-
-
 파인튜닝 후 베이스 모델 대비 구체적인 도구명과 선택 근거를 함께 제시하는 방향으로 응답 품질이 개선됐다.
 현재 프로젝트는 실시간 크롤링 기반 RAG 구조라 파인튜닝 모델 직접 연결 시 최신 정보 반영이 어려워 적용 방식 검토 중
 
 [파인튜닝 상세 기록 (HuggingFace)](https://huggingface.co/wooyeolj/gemma-3-4b-airecommender)
+
+---
+
+## AWS 인프라 구축 및 배포
+
+클라우드 비용을 최적화하기 위해, 전체 스택 배포 대신 인프라 검증을 위한 FastAPI 경량화 컨테이너 배포를 진행
+
+### AWS 인프라 구성
+
+| 항목 | 내용 |
+|------|------|
+| EC2 인스턴스 | Ubuntu 24.04, t2.micro 생성 및 관리 |
+| 보안 그룹 | 인바운드 규칙 설정 (SSH 22, HTTP 80, FastAPI 8000) |
+| 키 페어 | .pem 파일 생성 및 SSH 접속 |
+| Docker | EC2 서버에 Docker 설치 및 컨테이너 배포 |
+| 탄력적 IP | 고정 IP 할당 및 배포 검증 후 회수 |
+
+### 배포 및 검증 - API 문서 (Swagger UI)
+
+현재 AWS 리소스는 모두 안전하게 EIP 해지 및 인스턴스 중지됨
+
+<img width="1919" height="1030" alt="DOCS파일" src="https://github.com/user-attachments/assets/add5a2e8-0bcd-4c93-9fdc-5ec6ad6daef5" />
+
+
+### 전체 스택 배포 계획
+
+로컬 LLM(`gemma3:4b`) 및 원활한 전체 스택 서빙을 위한 요구 사양
+
+| 항목 | 내용 |
+|------|------|
+| 인스턴스 | t2.medium 이상 (RAM 4GB+) |
+| Ollama | gemma3:4b 모델 로컬 실행 |
 
 ---
 
