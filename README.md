@@ -25,6 +25,7 @@
 - [분류 정확도 평가](#분류-정확도-평가)
 - [RAG 품질 평가](#rag-품질-평가)
 - [기술적 도전과 해결](#기술적-도전과-해결)
+- [파인튜닝 실험](#파인튜닝-실험)
 - [향후 개선 방향](#향후-개선-방향)
 
 ---
@@ -496,6 +497,28 @@ LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질
 **해결:** sentence-transformers의 `CrossEncoder`로 교체. 동일한 `BAAI/bge-reranker-v2-m3` 모델을 사용하면서 의존성 충돌 없이 동작 성공.
 
 **교훈:** 라이브러리 선택 시 기능뿐 아니라 의존성 충돌 가능성도 고려해야 한다. 더 범용적인 라이브러리가 안정성 면에서 유리하다.
+
+---
+
+## 파인튜닝 실험
+
+LLM의 도메인 특화 어휘 학습 및 모델명과 추천이유로 이루어진 구조화된 답변 생성 품질 향상을 위한 파인튜닝 진행
+Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoRA로 직접 파인튜닝
+
+| 항목 | 내용 |
+|------|------|
+| 베이스 모델 | google/gemma-3-4b-it |
+| 학습 방식 | QLoRA (4-bit NF4 양자화 + LoRA rank=16) |
+| 데이터셋 | AI 도구 추천 Q&A 60개 직접 설계 (MODEL 25 / AGENT 25 / GENERAL 10) |
+| 학습 환경 | Google Colab T4 GPU (15GB VRAM), 약 15분 |
+| Train Loss | 5.5207 → 1.3070 (감소율 **76.3%**) |
+
+![Loss 그래프](https://huggingface.co/wooyeolj/gemma-3-4b-it-ai-tool-recommender/resolve/main/training_loss.png)
+
+파인튜닝 후 베이스 모델 대비 구체적인 도구명과 선택 근거를 함께 제시하는 방향으로 응답 품질이 개선됐다.
+현재 프로젝트는 실시간 크롤링 기반 RAG 구조라 파인튜닝 모델 직접 연결 시 최신 정보 반영이 어려워 적용 방식 검토 중
+
+[파인튜닝 상세 기록 (HuggingFace)](https://huggingface.co/wooyeolj/gemma-3-4b-airecommender)
 
 ---
 
