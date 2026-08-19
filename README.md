@@ -510,7 +510,7 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 |------|------|
 | 베이스 모델 | google/gemma-3-4b-it |
 | 학습 방식 | QLoRA (4-bit NF4 양자화 + LoRA rank=16) |
-| 데이터셋 | AI 도구 추천 Q&A 60개 직접 설계 (MODEL 25 / AGENT 25 / GENERAL 10, 학습 48 / 검증 12) |
+| 데이터셋 | AI 도구 추천 Q&A 60개 설계 (MODEL 25 / AGENT 25 / GENERAL 10, 학습 48 / 검증 12) |
 | 학습 환경 | Google Colab T4 GPU (15GB VRAM), 약 15분 |
 | Eval Loss | 4.99 → 1.27 |
 | Perplexity | 148.04 → 3.57 |
@@ -524,7 +524,7 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 4. **ROUGE-L** — 겹치는 단어들이 정답과 비슷한 순서까지 반영하는 값. ROUGE-1과 같은 이유로 소폭 낮아짐.
 
 
-<img width="2100" height="750" alt="comparison" src="https://github.com/user-attachments/assets/4b7df03c-bbd2-4b44-a498-e3348cfad4ad" />
+<img width="2100" height="500" alt="comparison" src="https://github.com/user-attachments/assets/4b7df03c-bbd2-4b44-a498-e3348cfad4ad" />
 파인튜닝 후 베이스 모델 대비 답변 포맷이 최적화되고 토큰 효율성이 향상됨
 
 <img width="2100" height="750" alt="training_loss"  src="https://github.com/user-attachments/assets/f2b81979-2155-4174-abb3-ae3cc5c3a293" />
