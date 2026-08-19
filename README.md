@@ -530,7 +530,7 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 
 <img width="2100" height="750" alt="training_loss"  src="https://github.com/user-attachments/assets/f2b81979-2155-4174-abb3-ae3cc5c3a293" />
 
-> Train Loss는 5.08 → 1.22로 꾸준히 감소했다(감소율 76%).
+> Train Loss는 5.08 → 1.22로 꾸준히 감소했다(감소율 76%). Eval Loss와 비슷한 추세로, 이는 과적합 징후 없이 학습 됨을 확인.
 
 
 **⚠️ 데이터셋 규모 한계 ⚠️**
