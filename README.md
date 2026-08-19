@@ -25,7 +25,7 @@
 - [분류 정확도 평가](#분류-정확도-평가)
 - [RAG 품질 평가](#rag-품질-평가)
 - [기술적 도전과 해결](#기술적-도전과-해결)
-- [파인튜닝 실험](#파인튜닝-실험)
+- [파인튜닝](#파인튜닝)
 - [AWS 인프라 구축 및 배포](#AWS-인프라-구축-및-배포)
 - [향후 개선 방향](#향후-개선-방향)
 
@@ -501,8 +501,7 @@ LLM의 비결정적 특성으로 인해 재실행 시 분류 결과가 달라질
 
 ---
 
-## 파인튜닝 실험
-
+## 파인튜닝
 LLM의 도메인 특화 어휘 학습 및 모델명과 추천이유로 이루어진 구조화된 답변 생성 품질 향상을 위한 파인튜닝 진행
 Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoRA로 직접 파인튜닝
 
@@ -510,14 +509,29 @@ Google Colab 무료 환경(T4 GPU)에서 **google/gemma-3-4b-it** 모델을 QLoR
 |------|------|
 | 베이스 모델 | google/gemma-3-4b-it |
 | 학습 방식 | QLoRA (4-bit NF4 양자화 + LoRA rank=16) |
-| 데이터셋 | AI 도구 추천 Q&A 60개 직접 설계 (MODEL 25 / AGENT 25 / GENERAL 10) |
+| 데이터셋 | AI 도구 추천 Q&A 60개 직접 설계 (MODEL 25 / AGENT 25 / GENERAL 10, 학습 48 / 검증 12) |
 | 학습 환경 | Google Colab T4 GPU (15GB VRAM), 약 15분 |
-| Train Loss | 5.5207 → 1.3070 (감소율 **76.3%**) |
+| Eval Loss | 4.99 → 1.27 |
+| Perplexity | 148.04 → 3.57 |
+| ROUGE-1 | 0.22 → 0.20  |
+| ROUGE-L | 0.18 → 0.17 |
 
-<img width="2083" height="740" alt="training_loss" src="https://github.com/user-attachments/assets/a9156002-2c3a-49e6-bc66-b4fa0297894c" />
 
-파인튜닝 후 베이스 모델 대비 구체적인 도구명과 선택 근거를 함께 제시하는 방향으로 응답 품질이 개선됐다.
-현재 프로젝트는 실시간 크롤링 기반 RAG 구조라 파인튜닝 모델 직접 연결 시 최신 정보 반영이 어려워 적용 방식 검토 중
+1. **Eval Loss (검증 손실)** — 검증 문항 12개에 대한 예측 오차값. 4.99 → 1.27 약 75% 감소
+2. **Perplexity (혼란도)** — 다음 단어 선택 시 후보 선택지 수. 148 → 3.57 약 98% 향상 
+3. **ROUGE-1** — 생성한 답변과 정답 문장 사이에서의 단어 겹침도(0~1). 0.22 → 0.20으로 소폭 낮아졌는데, 이는 파인튜닝 후 답변이 짧고 간결해지며 단어 수 자체가 줄었기 때문으로 추정됨.
+4. **ROUGE-L** — 겹치는 단어들이 정답과 비슷한 순서까지 반영하는 값. ROUGE-1과 같은 이유로 소폭 낮아짐.
+
+
+<img width="2100" height="750" alt="comparison" src="https://github.com/user-attachments/assets/4b7df03c-bbd2-4b44-a498-e3348cfad4ad" />
+파인튜닝 후 베이스 모델 대비 답변 포맷이 최적화되고 토큰 효율성이 향상됨
+
+<img width="2100" height="750" alt="training_loss"  src="https://github.com/user-attachments/assets/f2b81979-2155-4174-abb3-ae3cc5c3a293" />
+
+**⚠️ 데이터셋 규모 및 과적합 ⚠️**
+> 학습 데이터가 60개(학습 48 / 검증 12)로 적어, 정량 지표(Loss·Perplexity·ROUGE)는 파인튜닝 전후 변화 추이 확인용으로 활용할 것
+
+현재 프로젝트는 실시간 크롤링 기반 RAG 구조라 파인튜닝 된 모델을 직접 연결 시 최신 정보 반영이 어려워 적용 방식 검토 중
 
 [파인튜닝 상세 기록 (HuggingFace)](https://huggingface.co/wooyeolj/gemma-3-4b-airecommender)
 
