@@ -25,6 +25,7 @@ class Settings(BaseSettings):
 
     CACHE_TTL_DAYS: int = 14
     GITHUB_TOKEN: str = ""
+    OFFLINE_MODE: bool = False
 
     # .env를 읽고 기본값을 덮어씀
     model_config = SettingsConfigDict(

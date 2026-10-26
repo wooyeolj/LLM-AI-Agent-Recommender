@@ -98,7 +98,7 @@ def pricing_expired() -> bool:
 async def get_pricing() -> dict:
     global pricing_cache, pricing_cached_at
     async with pricing_lock:
-        if not pricing_cache or pricing_expired():
+        if not settings.OFFLINE_MODE and (not pricing_cache or pricing_expired()):
             data = await pricing_crawler.load_openrouter_prices()
             if data:
                 pricing_cache = data
@@ -219,8 +219,8 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
-        # 2. TTL 체크
-        if not documents or not is_recently_crawled(query):
+        # 2. TTL 체크 (오프라인 모드에서는 캐시된 DB 결과만 사용)
+        if not settings.OFFLINE_MODE and (not documents or not is_recently_crawled(query)):
             keyword = await self._extract_keyword(query) 
             if documents and keyword and is_recently_crawled(keyword):
                 await mark_crawled(query)
@@ -260,7 +260,7 @@ HuggingFace 모델 검색 키워드를 하나만 출력하십시오.
         documents = search_results["documents"][0] if search_results["documents"] else []
         metadatas = search_results["metadatas"][0] if search_results["metadatas"] else []
 
-        if not documents or not is_recently_crawled("__agent__"):
+        if not settings.OFFLINE_MODE and (not documents or not is_recently_crawled("__agent__")):
             logger.info("GitHub에서 에이전트 프레임워크 수집 중...")
             new_data = await github_crawler.fetch_agent_frameworks()
             if new_data:

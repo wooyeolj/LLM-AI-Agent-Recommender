@@ -38,11 +38,17 @@ async def lifespan(app: FastAPI):
         )
 
     app.state.ready = False
+    app.state.load_error = None
 
     async def _load_models():
-        await asyncio.to_thread(embedder._load)     # BGE-m3-ko
-        await asyncio.to_thread(reranker._load)     # bge-reranker-v2-m3
-        await asyncio.to_thread(vector_store._load) # ChromaDB
+        try:
+            await asyncio.to_thread(embedder._load)     # BGE-m3-ko
+            await asyncio.to_thread(reranker._load)     # bge-reranker-v2-m3
+            await asyncio.to_thread(vector_store._load) # ChromaDB
+        except Exception as e:
+            logger.error("ML 모델 로딩 실패: %s", e)
+            app.state.load_error = str(e)
+            return
         logger.info("ML 모델 로딩 완료")
         app.state.pipeline = recommender_pipeline
         app.state.ready = True
@@ -85,6 +91,9 @@ async def root():
 @app.get("/health")
 async def health():
     if not getattr(app.state, "ready", False):
+        load_error = getattr(app.state, "load_error", None)
+        if load_error:
+            return JSONResponse(status_code=503, content={"status": "error", "detail": load_error})
         return JSONResponse(status_code=503, content={"status": "loading"})
     return {"status": "ok"}
 

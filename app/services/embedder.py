@@ -1,5 +1,6 @@
 # BGE-m3-ko 임베딩 모델
 import logging
+import os
 import threading
 from sentence_transformers import SentenceTransformer
 from app.core.config import settings
@@ -7,11 +8,19 @@ from app.core.utils import LazyProxy
 
 logger = logging.getLogger(__name__)
 
+if settings.OFFLINE_MODE:
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
 
 class Embedder:
     def __init__(self):
         logger.info("Loading Embedding Model: %s...", settings.EMBEDDING_MODEL)
-        self.model = SentenceTransformer(settings.EMBEDDING_MODEL, device=settings.MODEL_DEVICE)
+        self.model = SentenceTransformer(
+            settings.EMBEDDING_MODEL,
+            device=settings.MODEL_DEVICE,
+            local_files_only=settings.OFFLINE_MODE,
+        )
         logger.info("Embedding Model loaded successfully.")
         self._cache: dict[str, list[float]] = {}
         self._max_cache = 512

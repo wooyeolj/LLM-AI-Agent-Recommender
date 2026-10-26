@@ -1,16 +1,25 @@
 # BGE-reranker-v2-m3 Cross-Encoder
 import logging
+import os
 from sentence_transformers import CrossEncoder
 from app.core.config import settings
 from app.core.utils import LazyProxy
 
 logger = logging.getLogger(__name__)
 
+if settings.OFFLINE_MODE:
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
 
 class Reranker:
     def __init__(self):
         logger.info("Loading Reranker Model: %s...", settings.RERANKER_MODEL)
-        self.model = CrossEncoder(settings.RERANKER_MODEL, device=settings.MODEL_DEVICE)
+        self.model = CrossEncoder(
+            settings.RERANKER_MODEL,
+            device=settings.MODEL_DEVICE,
+            local_files_only=settings.OFFLINE_MODE,
+        )
         logger.info("Reranker Model loaded successfully.")
 
     def rerank(self, query: str, documents: list[str], metadatas: list[dict], top_n: int = 3) -> list[dict]:
